@@ -89,7 +89,7 @@ For an input data table (pandas dataframe):
 
 
 ## Documentation
-For details about the ideas, please refer to [medium post link].  
+For details about the ideas, please refer to [Introducing to pydqc](https://medium.com/@SauceCat/introducing-pydqc-7f23d04076b3).  
 For description about the functions and parameters, please refer to [pydqc functions and parameters](https://github.com/SauceCat/pydqc/blob/master/parameters.md).  
 For test and demo, please refer to https://github.com/SauceCat/pydqc/tree/master/test.  
 For example outputs, please refer to https://github.com/SauceCat/pydqc/tree/master/test/output.  
