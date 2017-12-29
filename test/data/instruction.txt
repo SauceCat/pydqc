@@ -1,0 +1,1 @@
+follow the instruction in pydqc_test_on_Zillow.ipynb, download data and place it in this folder. :)
