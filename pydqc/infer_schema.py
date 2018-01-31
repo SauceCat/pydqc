@@ -11,6 +11,9 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from sklearn.externals.joblib import Parallel, delayed
 import xlsxwriter
 
+import warnings
+warnings.filterwarnings('ignore')
+
 
 """
 function: infer data type based on dropna sample values
@@ -104,7 +107,7 @@ function: adjust column width and font family for sheet
 parameters:
 ws: excel worksheet
 """
-def _adjust_column(ws):
+def _adjust_column(ws, col_height):
 	col_widths = {}
 	for i, col in enumerate(ws.columns):
 		col_name = xlsxwriter.utility.xl_col_to_name(i)
@@ -125,6 +128,9 @@ def _adjust_column(ws):
 	for i, col in enumerate(range(ws.max_column)):
 		col_name = xlsxwriter.utility.xl_col_to_name(i)
 		ws.column_dimensions[col_name].width = np.min([col_widths[col_name], 100])
+
+	for i in range(1, ws.max_row + 1):
+		ws.row_dimensions[i].height = col_height
 
 	for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
 		for cell in col:
@@ -167,7 +173,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		if int(sample_size) != sample_size:
 			raise ValueError('sample_size: only accept integer when it is > 1.0')
 		if sample_size > _data.shape[0]:
-			raise ValueError('sample_size: should be smaller or equal to len(_data)')
+			print("sample_size: %d is larger than the data size: %d" %(sample_size, _data.shape[0]))
 	else:
 		if sample_size <= 0:
 			raise ValueError('sample_size: should be larger than 0')
@@ -256,8 +262,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		full_infos_df['column'] = full_infos_df['column'].apply(lambda x : 'column not in current table' if pd.isnull(x) else x)
 
 		# reorder the column
-		full_infos_df = full_infos_df[['column', 'base_column', 'type', 'base_type', 
-		'sample_value', 'sample_num_uni', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
+		full_infos_df = full_infos_df[['column', 'base_column', 'type', 'base_type', 'sample_value', 'sample_num_uni', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
 
 
 	# add data validation for type column
@@ -330,7 +335,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 								  FormulaRule(formula=['%s2=1' %(column_mapping['sample_num_uni'])], stopIfTrue=True, fill=red_fill, font=red_font))
 
 	# adjust the column format for the worksheet
-	_adjust_column(ws)
+	_adjust_column(ws, 20)
 
 	wb.save(filename = os.path.join(output_root, 'data_schema_%s.xlsx' %(fname)))
 

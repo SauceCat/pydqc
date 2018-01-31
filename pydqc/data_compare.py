@@ -18,6 +18,10 @@ sns.set_style('white')
 from matplotlib_venn import venn2
 import datetime
 
+from dqc_utils import _style_range
+import warnings
+warnings.filterwarnings('ignore')
+
 
 # global color values
 TABLE1_DARK = "#4BACC6"
@@ -359,11 +363,11 @@ img_dir: string
 date_flag: bool, default=False
 	whether it is comparing date features
 """
-def _compare_numeric(col, _df1, _df2, sample_size, img_dir, date_flag=False):
+def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 
 	# sampling 
-	df1_sample = _df1.copy().sample(sample_size).reset_index(drop=True)
-	df2_sample = _df2.copy().sample(sample_size).reset_index(drop=True)
+	df1_sample = _df1.copy()
+	df2_sample = _df2.copy()
 
 	sample_value, nan_rate, num_uni, value_min, value_mean, value_median, value_max = _simple_stats(col, df1_sample, df2_sample, 'numeric')
 
@@ -401,6 +405,13 @@ def _compare_numeric(col, _df1, _df2, sample_size, img_dir, date_flag=False):
 	value_medians = [pd.to_numeric(v) for v in value_median.split('\n')]
 	value_maxs = [pd.to_numeric(v) for v in value_max.split('\n')]
 
+	if date_flag:
+		date_min1 = pd.to_datetime(df1_sample[col.replace('_numeric', '')], errors='coerce').min()
+		date_max1 = pd.to_datetime(df1_sample[col.replace('_numeric', '')], errors='coerce').max()
+
+		date_min2 = pd.to_datetime(df2_sample[col.replace('_numeric', '')], errors='coerce').min()
+		date_max2 = pd.to_datetime(df2_sample[col.replace('_numeric', '')], errors='coerce').max()
+
 	# get distribution
 	scale_flg = 0
 	if both_value_max >= 1000000:
@@ -411,13 +422,13 @@ def _compare_numeric(col, _df1, _df2, sample_size, img_dir, date_flag=False):
 		df2_draw_values = df2_signs * np.log10(abs(df2_sample_dropna_values) + 1)
 
 		df1_draw_value_4_signs = [np.sign(value_mins[0]), np.sign(value_means[0]), np.sign(value_medians[0]), np.sign(value_maxs[0])]
-		df1_draw_value_4_scale = [np.log10(abs(value_mins[0]+1)), np.log10(abs(value_means[0]+1)), 
-				np.log10(abs(value_medians[0]+1)), np.log10(abs(value_maxs[0]+1))]
+		df1_draw_value_4_scale = [np.log10(abs(value_mins[0])+1), np.log10(abs(value_means[0])+1), 
+				np.log10(abs(value_medians[0])+1), np.log10(abs(value_maxs[0])+1)]
 		df1_draw_value_4 = [df1_draw_value_4_signs[i] * df1_draw_value_4_scale[i] for i in range(4)]
 
 		df2_draw_value_4_signs = [np.sign(value_mins[1]), np.sign(value_means[1]), np.sign(value_medians[1]), np.sign(value_maxs[1])]
-		df2_draw_value_4_scale = [np.log10(abs(value_mins[1]+1)), np.log10(abs(value_means[1]+1)), 
-				np.log10(abs(value_medians[1]+1)), np.log10(abs(value_maxs[1]+1))]
+		df2_draw_value_4_scale = [np.log10(abs(value_mins[1])+1), np.log10(abs(value_means[1])+1), 
+				np.log10(abs(value_medians[1])+1), np.log10(abs(value_maxs[1])+1)]
 		df2_draw_value_4 = [df2_draw_value_4_signs[i] * df2_draw_value_4_scale[i] for i in range(4)]
 	else:
 		df1_draw_values = df1_sample_dropna_values
@@ -461,11 +472,6 @@ def _compare_numeric(col, _df1, _df2, sample_size, img_dir, date_flag=False):
 		y_low, y_up = np.min([y_low_1, y_low_2]), np.max([y_up_1, y_up_2])
 		plt.ylim((y_low, y_up))
 		if date_flag:
-			date_min1 = pd.to_datetime(df1_sample[col.replace('_numeric', '')], errors='coerce').min()
-			date_max1 = pd.to_datetime(df1_sample[col.replace('_numeric', '')], errors='coerce').max()
-
-			date_min2 = pd.to_datetime(df2_sample[col.replace('_numeric', '')], errors='coerce').min()
-			date_max2 = pd.to_datetime(df2_sample[col.replace('_numeric', '')], errors='coerce').max()
 
 			plt.text(df1_draw_value_4[0], y_low + (y_up-y_low)*0.1,'max:' + str(date_max1), 
 				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
@@ -526,11 +532,11 @@ sample_size: integer
 img_dir: string
 	directory for the generated images
 """
-def _compare_string(col, _df1, _df2, sample_size, img_dir):
+def _compare_string(col, _df1, _df2, img_dir):
 
 	# sampling
-	df1_sample = _df1.copy().sample(sample_size).reset_index(drop=True)
-	df2_sample = _df2.copy().sample(sample_size).reset_index(drop=True)
+	df1_sample = _df1.copy()
+	df2_sample = _df2.copy()
 
 	# get basic stats information
 	sample_value, nan_rate, num_uni = _simple_stats(col, df1_sample, df2_sample, 'str')
@@ -600,42 +606,14 @@ sample_size: integer
 img_dir: string
 	directory for the generated images
 """
-def _compare_date(col, _df1, _df2, sample_size, img_dir):
-	numeric_output = _compare_numeric(col, _df1, _df2, sample_size, img_dir, date_flag=True)
+def _compare_date(col, _df1, _df2, img_dir):
+	numeric_output = _compare_numeric(col, _df1, _df2, img_dir, date_flag=True)
 	col = numeric_output['column']
 	result_df = numeric_output['result_df']
 	result_df.loc[result_df['feature']=='column', 'value'] = col.replace('_numeric', '')
 	result_df.loc[0, 'graph'] = 'Distribution (months)'
 
 	return {'column': col.replace('_numeric', ''), 'result_df': result_df}
-
-
-def _style_range(ws, cell_range, border=Border()):
-    """
-    Apply styles to a range of cells as if they were a single cell.
-
-    :param ws:  Excel worksheet instance
-    :param range: An excel range to style (e.g. A1:F20)
-    :param border: An openpyxl Border
-    """
-    top = Border(top=border.top)
-    left = Border(left=border.left)
-    right = Border(right=border.right)
-    bottom = Border(bottom=border.bottom)
-
-    first_cell = ws[cell_range.split(":")[0]]
-    rows = ws[cell_range]
-
-    for cell in rows[0]:
-        cell.border = cell.border + top
-    for cell in rows[-1]:
-        cell.border = cell.border + bottom
-
-    for row in rows:
-        l = row[0]
-        r = row[-1]
-        l.border = l.border + left
-        r.border = r.border + right
 
 
 def _adjust_column(ws, col_height, col_heights=None, adjust_type=None):
@@ -876,7 +854,7 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 		if int(sample_size) != sample_size:
 			raise ValueError('sample_size: only accept integer when it is > 1.0')
 		if (sample_size > _table1.shape[0]) or (sample_size > _table2.shape[0]):
-			raise ValueError('sample_size: should be smaller or equal to len(_table1) and len(_table2)')
+			print('sample_size: %d is smaller than %d or %d...' %(sample_size, _table1.shape[0], _table2.shape[0]))
 	else:
 		if sample_size <= 0:
 			raise ValueError('sample_size: should be larger than 0')
@@ -969,12 +947,17 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 		ws = wb.create_sheet(title='key')
 		_insert_compare_results(key_results, ws, 40, img_dir)
 
+	# do sampling here
+	if sample_size < table1.shape[0]:
+		table1 = table1.sample(sample_size).reset_index(drop=True)
+	if sample_size < table2.shape[0]:
+		table2 = table2.sample(sample_size).reset_index(drop=True)
 
 	# for numeric features
 	# only check features in both tables
 	numeric_features = [feat for feat in numeric_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(numeric_features) > 0:
-		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_compare_numeric)(col, table1[[col]], table2[[col]], sample_size, img_dir) 
+		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_compare_numeric)(col, table1[[col]], table2[[col]], img_dir) 
 			for col in numeric_features)
 		# write all results to worksheet
 		ws = wb.create_sheet(title='numeric')
@@ -985,7 +968,7 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 	# only check features in both tables
 	string_features = [feat for feat in string_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(string_features) > 0:
-		string_results = Parallel(n_jobs=n_jobs)(delayed(_compare_string)(col, table1[[col]], table2[[col]], sample_size, img_dir) 
+		string_results = Parallel(n_jobs=n_jobs)(delayed(_compare_string)(col, table1[[col]], table2[[col]], img_dir) 
 			for col in string_features)
 		# write all results to worksheet
 		ws = wb.create_sheet(title='string')
@@ -1004,7 +987,7 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 			table2['%s_numeric' %(col)] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table2[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
 		date_results = Parallel(n_jobs=n_jobs)(delayed(_compare_date)('%s_numeric' %(col), 
-			table1[['%s_numeric' %(col), col]], table2[['%s_numeric' %(col), col]], sample_size, img_dir) for col in date_features)
+			table1[['%s_numeric' %(col), col]], table2[['%s_numeric' %(col), col]], img_dir) for col in date_features)
 		# write all results to worksheet
 		ws = wb.create_sheet(title='date')
 		_insert_compare_results(date_results, ws, 40, img_dir, date_flag=True)
@@ -1012,7 +995,7 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 
 	# insert error
 	ws = wb['Sheet']
-	wb.remove_sheet(ws)
+	wb.remove(ws)
 
 	# if there are some errors
 	if len(schema_error) > 0:
@@ -1148,11 +1131,7 @@ def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, sample=Fa
 		outbook.write('## import useful packages\n\n')
 		outbook.write('"""\n\n')
 		
-		packages = ['import pandas as pd', 'import numpy as np', 'import os', 'import shutil\n', 
-		'import openpyxl', 'from openpyxl.utils.dataframe import dataframe_to_rows', 
-		'from openpyxl.styles import Font, Alignment, PatternFill, Border, Side', 
-		'from openpyxl.formatting.rule import ColorScaleRule, FormulaRule, DataBar, FormatObject, Rule\n', 'import xlsxwriter\n', 
-		'import datetime', 'from sklearn.externals.joblib import Parallel, delayed\n', 'import matplotlib.pyplot as plt', 
+		packages = ['import pandas as pd', 'import numpy as np', '\nimport datetime\n', 'import matplotlib.pyplot as plt', 
 		'import seaborn as sns', 'sns.set_style("white")', 'from matplotlib_venn import venn2','\n%matplotlib inline', 
 		'\nfrom pydqc.data_compare import distribution_compare_pretty']
 
@@ -1258,7 +1237,7 @@ def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, sample=Fa
 			outbook.write('num_uni1 = df1[col].dropna().nunique()\n')
 			outbook.write('num_uni2 = df2[col].dropna().nunique()\n\n')
 			outbook.write('print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))\n')
-			outbook.write('print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))\n')
+			outbook.write('print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))\n\n')
 
 			# for key and str, compare intersection
 			if (col_type == 'key') or (col_type == 'str'):

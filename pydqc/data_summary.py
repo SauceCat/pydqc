@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 sns.set_style('white')
 
+from dqc_utils import _style_range, _adjust_column
+import warnings
+warnings.filterwarnings('ignore')
+
 # global color values
 VER_LINE = "#4BACC6"
 TEXT_LIGHT = "#DAEEF3"
@@ -158,13 +162,9 @@ img_dir: string
 date_flag: bool, default=False
 	whether it is checking date features
 """
-def _check_numeric(col, _value_df, sample_size, img_dir, date_flag=False):
+def _check_numeric(col, _value_df, img_dir, date_flag=False):
 
-	# sampling
-	if sample_size < _value_df.shape[0]:
-		value_df = _value_df.copy().sample(sample_size).reset_index(drop=True)
-	else:
-		value_df = _value_df.copy()
+	value_df = _value_df.copy()
 
 	# ensure all values are numeric
 	value_df[col] = pd.to_numeric(value_df[col], errors='coerce')
@@ -201,6 +201,9 @@ def _check_numeric(col, _value_df, sample_size, img_dir, date_flag=False):
 		value_mean = value_df[col].mean()
 		value_median = value_df[col].median()
 		value_max = value_df[col].max()
+		if date_flag:
+			date_min = pd.to_datetime(value_df[col.replace('_numeric', '')], errors='coerce').min()
+			date_max = pd.to_datetime(value_df[col.replace('_numeric', '')], errors='coerce').max()
 
 		# get distribution
 		scale_flg = 0
@@ -236,8 +239,6 @@ def _check_numeric(col, _value_df, sample_size, img_dir, date_flag=False):
 
 			y_low, y_up = ax.get_ylim()
 			if date_flag:
-				date_min = pd.to_datetime(value_df[col.replace('_numeric', '')], errors='coerce').min()
-				date_max = pd.to_datetime(value_df[col.replace('_numeric', '')], errors='coerce').max()
 				plt.text(draw_value_4[0], y_low + (y_up-y_low)*0.2,'max:' + str(date_max), 
 					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
 				plt.text(draw_value_4[3], y_low + (y_up-y_low)*0.8,'min:' + str(date_min), 
@@ -286,12 +287,9 @@ _value_df: pandas DataFrame
 sample_size: integer
 	number of sample rows to check on
 """
-def _check_string(col, _value_df, sample_size):
-	# sampling
-	if sample_size < _value_df.shape[0]:
-		value_df = _value_df.copy().sample(sample_size).reset_index(drop=True)
-	else:
-		value_df = _value_df.copy()
+def _check_string(col, _value_df):
+	
+	value_df = _value_df.copy()
 
 	# percentage of nan
 	nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
@@ -347,79 +345,15 @@ sample_size: integer
 img_dir: string
 	directory for the generated images
 """
-def _check_date(col, value_df, sample_size, img_dir):
+def _check_date(col, value_df, img_dir):
 
-	numeric_output = _check_numeric(col, value_df, sample_size, img_dir, date_flag=True)
+	numeric_output = _check_numeric(col, value_df, img_dir, date_flag=True)
 	col = numeric_output['column']
 	result_df = numeric_output['result_df']
 	result_df.loc[result_df['feature']=='column', 'value'] = col.replace('_numeric', '')
 	result_df.loc[0, 'graph'] = 'Distribution (months)'
 
 	return {'column': col.replace('_numeric', ''), 'result_df': result_df}
-
-
-"""
-function: adjust column width and font family for sheet
-parameters:
-ws: excel worksheet
-col_height: height of the column
-"""
-def _adjust_column(ws, col_height):
-	col_widths = {}
-	for i, col in enumerate(ws.columns):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		col_widths[col_name] = 0
-		for cell in col:
-			cell.alignment = Alignment(horizontal='left', wrap_text=True)
-			if cell:
-				try:
-					cell_length = len(str(cell.value))
-				except:
-					cell_length = len(cell.value)
-				if cell_length > col_widths[col_name]:
-					col_widths[col_name] = cell_length
-
-	for key in col_widths.keys():
-		col_widths[key] *= 1.5
-
-	for i, col in enumerate(range(ws.max_column)):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		ws.column_dimensions[col_name].width = col_widths[col_name]
-
-	for i in range(ws.max_row):
-		ws.row_dimensions[i].height = col_height
-
-	for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-		for cell in col:
-			cell.font = Font(name='Calibri', size=11)
-
-
-def _style_range(ws, cell_range, border=Border()):
-	"""
-	Apply styles to a range of cells as if they were a single cell.
-
-	:param ws:  Excel worksheet instance
-	:param range: An excel range to style (e.g. A1:F20)
-	:param border: An openpyxl Border
-	"""
-	top = Border(top=border.top)
-	left = Border(left=border.left)
-	right = Border(right=border.right)
-	bottom = Border(bottom=border.bottom)
-
-	first_cell = ws[cell_range.split(":")[0]]
-	rows = ws[cell_range]
-
-	for cell in rows[0]:
-		cell.border = cell.border + top
-	for cell in rows[-1]:
-		cell.border = cell.border + bottom
-
-	for row in rows:
-		l = row[0]
-		r = row[-1]
-		l.border = l.border + left
-		r.border = r.border + right
 
 
 """
@@ -561,6 +495,42 @@ def _insert_string_results(string_results, ws, col_height):
 
 
 """
+function: adjust column width and font family for sheet
+parameters:
+ws: excel worksheet
+col_height: height of the column
+"""
+def _adjust_column(ws, col_height):
+	col_widths = {}
+	for i, col in enumerate(ws.columns):
+		col_name = xlsxwriter.utility.xl_col_to_name(i)
+		col_widths[col_name] = 0
+		for cell in col:
+			cell.alignment = Alignment(horizontal='left', wrap_text=True)
+			if cell:
+				try:
+					cell_length = len(str(cell.value))
+				except:
+					cell_length = len(cell.value)
+				if cell_length > col_widths[col_name]:
+					col_widths[col_name] = cell_length
+
+	for key in col_widths.keys():
+		col_widths[key] *= 1.5
+
+	for i, col in enumerate(range(ws.max_column)):
+		col_name = xlsxwriter.utility.xl_col_to_name(i)
+		ws.column_dimensions[col_name].width = col_widths[col_name]
+
+	for i in range(ws.max_row):
+		ws.row_dimensions[i].height = col_height
+
+	for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
+		for cell in col:
+			cell.font = Font(name='Calibri', size=11)
+
+
+"""
 function: summary basic information of all columns in a data table based on the provided data schema
 parameters:
 table_schema: pandas DataFrame
@@ -601,7 +571,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		if int(sample_size) != sample_size:
 			raise ValueError('sample_size: only accept integer when it is > 1.0')
 		if sample_size > _table.shape[0]:
-			raise ValueError('sample_size: should be smaller or equal to len(_table)')
+			print("sample_size: %d is larger than the data size: %d" %(sample_size, _table.shape[0]))
 	else:
 		if sample_size <= 0:
 			raise ValueError('sample_size: should be larger than 0')
@@ -640,6 +610,9 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	if sample_size <= 1.0:
 		sample_size = int(table.shape[0] * sample_size)
 
+	if sample_size < table.shape[0]:
+		table = table.sample(sample_size).reset_index(drop=True) 
+
 	# classify features based on data type
 	key_features = table_schema[table_schema[dtype_colname] == 'key'][feature_colname].values
 	numeric_features = table_schema[table_schema[dtype_colname] == 'numeric'][feature_colname].values
@@ -660,8 +633,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	key_features = [feat for feat in key_features if feat in table.columns.values]
 	if len(key_features) > 0:
 		# get the check result
-		key_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]], sample_size) 
-			for col in key_features)
+		key_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in key_features)
 		ws = wb.create_sheet(title='key')
 		# write the final result to work sheet
 		_insert_string_results(key_results, ws, 18)
@@ -672,8 +644,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	numeric_features = [feat for feat in numeric_features if feat in table.columns.values]
 	if len(numeric_features) > 0:
 		# get the check result
-		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_check_numeric)(col, table[[col]], sample_size, img_dir) 
-			for col in numeric_features)
+		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_check_numeric)(col, table[[col]], img_dir) for col in numeric_features)
 		ws = wb.create_sheet(title='numeric')
 		# write the final result to work sheet
 		_insert_numeric_results(numeric_results, ws, 30, img_dir)
@@ -683,8 +654,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	# only check features in table
 	string_features = [feat for feat in string_features if feat in table.columns.values]
 	if len(string_features) > 0:
-		string_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]], sample_size) 
-			for col in string_features)
+		string_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in string_features)
 		ws = wb.create_sheet(title='string')
 		# write the final result to work sheet
 		_insert_string_results(string_results, ws, 18)
@@ -700,7 +670,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 			table['%s_numeric' %(col)] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
 		date_results = Parallel(n_jobs=n_jobs)(delayed(_check_date)('%s_numeric' %(col), 
-			table[['%s_numeric' %(col), col]], sample_size, img_dir) for col in date_features)
+			table[['%s_numeric' %(col), col]], img_dir) for col in date_features)
 
 		ws = wb.create_sheet(title='date')
 		# write the final result to work sheet
@@ -797,12 +767,9 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 		outbook.write('## import useful packages\n\n')
 		outbook.write('"""\n\n')
 		
-		packages = ['import pandas as pd', 'import numpy as np', 'import os', 'import shutil\n', 
-		'import openpyxl', 'from openpyxl.utils.dataframe import dataframe_to_rows', 
-		'from openpyxl.styles import Font, Alignment, PatternFill, Border, Side', 
-		'from openpyxl.formatting.rule import ColorScaleRule, FormulaRule, DataBar, FormatObject, Rule\n', 'import xlsxwriter\n', 
-		'import datetime', 'from sklearn.externals.joblib import Parallel, delayed\n', 'import matplotlib.pyplot as plt', 
-		'import seaborn as sns', 'sns.set_style("white")', '\n%matplotlib inline', '\nfrom pydqc.data_summary import distribution_summary_pretty']
+		packages = ['import pandas as pd', 'import numpy as np', '\nimport datetime\n',
+		'import matplotlib.pyplot as plt', 'import seaborn as sns', 'sns.set_style("white")', 
+		'\n%matplotlib inline', '\nfrom pydqc.data_summary import distribution_summary_pretty']
 
 		outbook.write('\n'.join(packages))
 
@@ -836,6 +803,10 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 			outbook.write('else:\n')
 			outbook.write('    if sample_size > table.shape[0]:\n')
 			outbook.write('        raise ValueError("sample_size: should be smaller or equal to table size")\n')
+			outbook.write('\n"""\n')
+			outbook.write('## do sampling\n\n')
+			outbook.write('"""\n\n')
+			outbook.write('table = table.sample(sample_size).reset_index(drop=True)\n')
 
 		# only compare check columns in both table_schema and table
 		schema_col_set = set(table_schema[feature_colname].values)
@@ -871,14 +842,11 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 			outbook.write('"""\n\n')
 
 			outbook.write('col="%s"\n' %(col))
-			if sample:
-				outbook.write('value_df = table[[col]].copy().sample(sample_size).reset_index(drop=True)\n')
-			else:
-				outbook.write('value_df = table[[col]].copy()\n')
+			outbook.write('value_df = table[[col]].copy()\n')
 
 			# basic statistics
 			outbook.write('nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]\n')
-			outbook.write('num_uni = value_df[col].dropna().nunique()\n')
+			outbook.write('num_uni = value_df[col].dropna().nunique()\n\n')
 			outbook.write('print("nan_rate: " + str(nan_rate))\n')
 			outbook.write('print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))\n')
 
