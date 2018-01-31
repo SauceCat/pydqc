@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 sns.set_style('white')
 
-from dqc_utils import _style_range, _adjust_column
+from dqc_utils import _style_range
 import warnings
 warnings.filterwarnings('ignore')
 
