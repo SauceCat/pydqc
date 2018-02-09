@@ -95,7 +95,7 @@ For an input data table (pandas dataframe):
       
     - **'str'**: check whether two values of the same key is the same between two tables.  
     **example output:**  
-      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_str.PNG" width="60%"> 
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_str.PNG" width="45%"> 
       
     - **'numeric'**: calculate a Spearman rank-order correlation coefficient between values of the same key between two tables, calculate the minimum, mean, median, maximum difference rate between two values.  
     **example output:**   
