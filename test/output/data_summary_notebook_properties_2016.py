@@ -6,18 +6,8 @@
 
 import pandas as pd
 import numpy as np
-import os
-import shutil
-
-import openpyxl
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from openpyxl.formatting.rule import ColorScaleRule, FormulaRule, DataBar, FormatObject, Rule
-
-import xlsxwriter
 
 import datetime
-from sklearn.externals.joblib import Parallel, delayed
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -59,6 +49,7 @@ col="parcelid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -78,6 +69,7 @@ col="airconditioningtypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -97,6 +89,7 @@ col="architecturalstyletypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -116,6 +109,7 @@ col="basementsqft"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -159,6 +153,7 @@ col="bathroomcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -202,6 +197,7 @@ col="bedroomcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -245,6 +241,7 @@ col="buildingclasstypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -264,6 +261,7 @@ col="buildingqualitytypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -283,6 +281,7 @@ col="calculatedbathnbr"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -326,6 +325,7 @@ col="decktypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -345,6 +345,7 @@ col="finishedfloor1squarefeet"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -388,6 +389,7 @@ col="calculatedfinishedsquarefeet"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -431,6 +433,7 @@ col="finishedsquarefeet12"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -474,6 +477,7 @@ col="finishedsquarefeet13"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -517,6 +521,7 @@ col="finishedsquarefeet15"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -560,6 +565,7 @@ col="finishedsquarefeet50"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -603,6 +609,7 @@ col="finishedsquarefeet6"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -646,6 +653,7 @@ col="fips"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -665,6 +673,7 @@ col="fireplacecnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -708,6 +717,7 @@ col="fullbathcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -751,6 +761,7 @@ col="garagecarcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -794,6 +805,7 @@ col="garagetotalsqft"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -837,6 +849,7 @@ col="hashottuborspa"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -856,6 +869,7 @@ col="heatingorsystemtypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -875,6 +889,7 @@ col="latitude"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -918,6 +933,7 @@ col="longitude"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -961,6 +977,7 @@ col="lotsizesquarefeet"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1004,6 +1021,7 @@ col="poolcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1047,6 +1065,7 @@ col="poolsizesum"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1090,6 +1109,7 @@ col="pooltypeid10"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1109,6 +1129,7 @@ col="pooltypeid2"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1128,6 +1149,7 @@ col="pooltypeid7"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1147,6 +1169,7 @@ col="propertycountylandusecode"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1166,6 +1189,7 @@ col="propertylandusetypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1185,6 +1209,7 @@ col="propertyzoningdesc"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1204,6 +1229,7 @@ col="rawcensustractandblock"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1223,6 +1249,7 @@ col="regionidcity"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1242,6 +1269,7 @@ col="regionidcounty"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1261,6 +1289,7 @@ col="regionidneighborhood"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1280,6 +1309,7 @@ col="regionidzip"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1299,6 +1329,7 @@ col="roomcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1342,6 +1373,7 @@ col="storytypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1361,6 +1393,7 @@ col="threequarterbathnbr"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1404,6 +1437,7 @@ col="typeconstructiontypeid"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1423,6 +1457,7 @@ col="unitcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1466,6 +1501,7 @@ col="yardbuildingsqft17"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1509,6 +1545,7 @@ col="yardbuildingsqft26"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1552,6 +1589,7 @@ col="yearbuilt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1571,6 +1609,7 @@ col="numberofstories"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1614,6 +1653,7 @@ col="fireplaceflag"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1633,6 +1673,7 @@ col="structuretaxvaluedollarcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1676,6 +1717,7 @@ col="taxvaluedollarcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1719,6 +1761,7 @@ col="assessmentyear"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1738,6 +1781,7 @@ col="landtaxvaluedollarcnt"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1781,6 +1825,7 @@ col="taxamount"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1824,6 +1869,7 @@ col="taxdelinquencyflag"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1843,6 +1889,7 @@ col="taxdelinquencyyear"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 
@@ -1886,6 +1933,7 @@ col="censustractandblock"
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
+
 print("nan_rate: " + str(nan_rate))
 print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
 

@@ -6,18 +6,8 @@
 
 import pandas as pd
 import numpy as np
-import os
-import shutil
-
-import openpyxl
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from openpyxl.formatting.rule import ColorScaleRule, FormulaRule, DataBar, FormatObject, Rule
-
-import xlsxwriter
 
 import datetime
-from sklearn.externals.joblib import Parallel, delayed
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -100,6 +90,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -165,6 +156,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -248,6 +240,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -329,6 +322,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -412,6 +406,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -495,6 +490,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -579,6 +575,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -661,6 +658,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -742,6 +740,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -826,6 +825,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -907,6 +907,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -990,6 +991,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1073,6 +1075,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1156,6 +1159,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1239,6 +1243,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1322,6 +1327,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1405,6 +1411,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1489,6 +1496,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -1570,6 +1578,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1653,6 +1662,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1736,6 +1746,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1819,6 +1830,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -1903,6 +1915,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -1985,6 +1998,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -2066,6 +2080,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -2149,6 +2164,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -2232,6 +2248,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -2315,6 +2332,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -2398,6 +2416,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -2482,6 +2501,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -2563,6 +2583,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -2646,6 +2667,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -2727,6 +2749,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -2810,6 +2833,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -2891,6 +2915,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -2974,6 +2999,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -3039,6 +3065,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -3122,6 +3149,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -3203,6 +3231,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
@@ -3286,6 +3315,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -3367,6 +3397,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -3451,6 +3482,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -3532,6 +3564,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -3616,6 +3649,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -3697,6 +3731,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -3780,6 +3815,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -3863,6 +3899,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -3947,6 +3984,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -4028,6 +4066,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4112,6 +4151,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -4193,6 +4233,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4276,6 +4317,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4360,6 +4402,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -4441,6 +4484,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4524,6 +4568,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4608,6 +4653,7 @@ num_uni2 = df2[col].dropna().nunique()
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
+
 """
 #### compare intersection
 
@@ -4689,6 +4735,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 #min value
 value_min1=df1[col].min()
 value_min2=df2[col].min()
@@ -4772,6 +4819,7 @@ num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
 
 """
 #### compare intersection
