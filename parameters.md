@@ -277,3 +277,150 @@ df2 = table2[[col]].copy()
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
 ```
 -------------------------------------------------------------------------------------------------------
+
+#### pydqc.data_consist.data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', keep_images=False, n_jobs=1)
+
+**function:** check consistency for same columns between two tables
+
+**Parameters:** 
+	
+* **_table1**: pandas DataFrame  
+	- one of the two tables to compare  
+* **_table2**: pandas DataFrame  
+	- one of the two tables to compare  
+* **_key1**: string  
+	- key for table1  
+* **_key2**: string  
+	- key for table2  
+* **_schema1**: pandas DataFrame  
+	- data schema (contains column names and corresponding data types) for _table1  
+* **_schema2**: pandas DataFrame  
+	- data schema (contains column names and corresponding data types) for _table2  
+* **fname**: string  
+	- the output file name  
+* **sample_size**: integer or float(<=1.0), default=1.0  
+	- int: number of sample rows to do the comparison (useful for large tables)  
+	- float: sample size in percentage  
+* **feature_colname1**: string, default='column'  
+	- name of the column for feature of _table1  
+* **feature_colname2**: string, default='column'  
+	- name of the column for feature of _table2  
+* **dtype_colname1**: string, default='type'  
+	- name of the column for data type of _table1  
+* **dtype_colname2**: string, default='type'  
+	- name of the column for data type of _table2  
+* **output_root**: string, default=''  
+	- the root directory for the output file  
+* **keep_images**: boolean, default=False  
+	- whether to keep all generated images  
+* **n_jobs**: int, default=1  
+	- the number of jobs to run in parallel  
+
+**Example:**  
+```python
+import pandas as pd
+from pydqc import infer_schema, data_summary, data_compare, data_consist
+
+data_2016 = pd.read_csv('data/properties_2016.csv')
+data_2017 = pd.read_csv('data/properties_2017.csv')
+
+# we should use the modified data schema
+data_2016_schema = pd.read_excel('output/data_schema_properties_2016_mdf.xlsx')
+data_2017_schema = pd.read_excel('output/data_schema_properties_2017_mdf.xlsx')
+
+data_consist.data_consist(_table1=data_2016, _table2=data_2017, _schema1=data_2016_schema, _schema2=data_2017_schema, 
+                          _key1='parcelid', _key2='parcelid',
+                          fname='properties_2016', sample_size=1.0, feature_colname1='column', feature_colname2='column',
+                          dtype_colname1='type', dtype_colname2='type', output_root='output/', n_jobs=1)
+```
+-------------------------------------------------------------------------------------------------------
+  
+#### pydqc.data_consist.data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, feature_colname1='column', feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='')
+
+**function:** automatically generate ipynb for data consistency check
+
+**Parameters:** 
+	
+* **_table1**: pandas DataFrame  
+	- one of the two tables to compare  
+* **_table2**: pandas DataFrame  
+	- one of the two tables to compare  
+* **_key1**: string  
+	- key for table1  
+* **_key2**: string  
+	- key for table2  
+* **_schema1**: pandas DataFrame  
+	- data schema (contains column names and corresponding data types) for _table1  
+* **_schema2**: pandas DataFrame  
+	- data schema (contains column names and corresponding data types) for _table2  
+* **fname**: string  
+	- the output file name  
+* **sample**: boolean, default=False
+	- whether to do sampling on the original data  
+* **feature_colname1**: string, default='column'  
+	- name of the column for feature of _table1  
+* **feature_colname2**: string, default='column'  
+	- name of the column for feature of _table2  
+* **dtype_colname1**: string, default='type'  
+	- name of the column for data type of _table1  
+* **dtype_colname2**: string, default='type'  
+	- name of the column for data type of _table2  
+* **output_root**: string, default=''  
+	- the root directory for the output file  
+
+**Example:**  
+```python
+import pandas as pd
+from pydqc import infer_schema, data_summary, data_compare, data_consist
+
+data_2016 = pd.read_csv('data/properties_2016.csv')
+data_2017 = pd.read_csv('data/properties_2017.csv')
+
+# we should use the modified data schema
+data_2016_schema = pd.read_excel('output/data_schema_properties_2016_mdf.xlsx')
+data_2017_schema = pd.read_excel('output/data_schema_properties_2017_mdf.xlsx')
+
+data_consist.data_consist_notebook(_table1=data_2016, _table2=data_2017, _key1='parcelid', _key2='parcelid',
+                                   _schema1=data_2016_schema, _schema2=data_2017_schema,
+                                   fname='properties', feature_colname1='column', feature_colname2='column', 
+                                   dtype_colname1='type', dtype_colname2='type', output_root='output/')
+```
+-------------------------------------------------------------------------------------------------------
+  
+#### pydqc.data_consist.numeric_consist_pretty(_df1, _df2, _key1, _key2, col, figsize=None, date_flag=False)
+
+**function:** draw pretty consist graph for numeric columns
+
+**Parameters:** 
+	
+* **_df1**: pandas DataFrame  
+	- slice of table1 containing enough information to check  
+* **_df2**: pandas DataFrame  
+	- slice of table2 containing enough information to check  
+* **_key1**: string  
+	- key for table1  
+* **_key2**: string  
+	- key for table2  
+* **col**: string  
+	- name of column to check  
+* **figsize**: tuple, default=None  
+	- figure size  
+* **date_flag**: bool, default=False  
+	- whether it is checking date features  
+
+**Example:**  
+```python
+import pandas as pd
+from pydqc import infer_schema, data_summary, data_compare, data_consist
+
+table1 = pd.read_csv('data/properties_2016.csv')
+table2 = pd.read_csv('data/properties_2017.csv')
+
+# we should use the modified data schema
+col="bathroomcnt"
+df1 = table1[[col]].copy()
+df2 = table2[[col]].copy()
+
+data_consist.numeric_consist_pretty(_df1, _df2, _key1, _key2, col, figsize=None, date_flag=False)
+```
+-------------------------------------------------------------------------------------------------------
