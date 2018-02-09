@@ -86,6 +86,24 @@ For an input data table (pandas dataframe):
    ***You can also turn the whole data compare process into a jupyter notebook by function data_compare_notebook()***  
   - example output for data compare: [data compare report](https://github.com/SauceCat/pydqc/blob/master/test/output/data_compare_properties_2016.xlsx)  
   - example output for data compare notebook: [data compare notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_compare_notebook_properties_2016.ipynb)  
+  
+### Step 2 (option 3): data consist 
+- **function: data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', 
+	feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', keep_images=False, n_jobs=1)**   
+  Check consistency of the same columns between two different tables by merging tables on the provided keys. (It might be useful when we want to compare training set with test set, or sample table from two different snapshot dates)  
+    - **'key'**: same as data_compare for key type  
+      
+    - **'str'**: check whether two values of the same key is the same between two tables.  
+    **example output:**  
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_str.PNG" width="60%"> 
+      
+    - **'numeric'**: calculate a Spearman rank-order correlation coefficient between values of the same key between two tables, calculate the minimum, mean, median, maximum difference rate between two values.  
+    **example output:**   
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_numeric.PNG" width="80%"> 
+
+   ***You can also turn the whole data compare process into a jupyter notebook by function data_consist_notebook()***  
+  - example output for data consist: [data consist report](https://github.com/SauceCat/pydqc/blob/master/test/output/data_consist_properties_2016.xlsx)  
+  - example output for data consist notebook: [data consist notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_consist_notebook_properties_2016.ipynb)  
 
 
 ## Documentation
