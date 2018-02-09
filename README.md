@@ -110,7 +110,7 @@ For an input data table (pandas dataframe):
    ***You can also turn the whole data compare process into a jupyter notebook by function data_consist_notebook()***  
   - example output for data consist: [data consist report](https://github.com/SauceCat/pydqc/blob/master/test/output/data_consist_properties_2016.xlsx)  
   Inside the excel report, there is a worksheet called 'summary'. This worksheet summarizes the basic information regarding the consistency checking result, including a 'corr' field that indicates correlation of the same column between different tables.  
-      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_summary.png" width="80%">  
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_summary.PNG" width="80%">  
       - **key**: 'corr' = rate of overlap
       - **str**: 'corr' = rate of consistency
       - **numeric** and **date**: 'corr' = Spearman rank-order correlation coefficient between not-nan value pairs
