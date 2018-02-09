@@ -14,17 +14,9 @@ import xlsxwriter
 import warnings
 warnings.filterwarnings('ignore')
 
+from dqc_utils import _adjust_column
 
-"""
-function: infer data type based on dropna sample values
-parameters:
-sample_data: numpy array
-	sample values
-col: string
-	column name
-type_threshold: float
-	threshold for assigning data type
-"""
+
 def _infer_dtype(sample_data, col, type_threshold):
 	# get basic dtype from pandas
 	col_dtype = str(pd.Series(sample_data).dtype)
@@ -52,16 +44,6 @@ def _infer_dtype(sample_data, col, type_threshold):
 	return type_info
 
 
-"""
-function: calculate simple statistic information for each column
-parameters:
-sample_data: numpy array
-	sample values
-col: string
-	column name
-col_type: string
-	column data type
-"""
 def _cal_column_stat(sample_data, col, col_type):
 	col_stat = {}
 	col_stat['column'] = col
@@ -100,41 +82,6 @@ def _cal_column_stat(sample_data, col, col_type):
 		else:
 			col_stat['sample_num_uni'] = 0
 	return col_stat
-
-
-"""
-function: adjust column width and font family for sheet
-parameters:
-ws: excel worksheet
-"""
-def _adjust_column(ws, col_height):
-	col_widths = {}
-	for i, col in enumerate(ws.columns):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		col_widths[col_name] = 0
-		for cell in col:
-			cell.alignment = Alignment(horizontal='left', wrap_text=True)
-			if cell:
-				try:
-					cell_length = len(str(cell.value))
-				except:
-					cell_length = len(cell.value)
-				if cell_length > col_widths[col_name]:
-					col_widths[col_name] = cell_length
-
-	for key in col_widths.keys():
-		col_widths[key] *= 1.5
-
-	for i, col in enumerate(range(ws.max_column)):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		ws.column_dimensions[col_name].width = np.min([col_widths[col_name], 100])
-
-	for i in range(1, ws.max_row + 1):
-		ws.row_dimensions[i].height = col_height
-
-	for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-		for cell in col:
-			cell.font = Font(name='Calibri', size=11)
 
 
 """
@@ -277,14 +224,14 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 	# write everything into the worksheet
 	for r_idx, r in enumerate(dataframe_to_rows(full_infos_df, index=False, header=True)):
 		ws.append(r)
-		if r_idx != 0:
-			val_type.add(ws['%s%d' %(column_mapping['type'], ws.max_row)])
-
-		# bold the column names
-		if r_idx == 0:
-			for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-				for cell in col:
+		for cell_idx, cell in enumerate(ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row)):
+			cell = cell[0]
+			if r_idx != 0:
+				val_type.add(ws['%s%d' %(column_mapping['type'], ws.max_row)])
+				if cell_idx == 0:
 					cell.font = Font(bold=True)
+			else:
+				cell.style = 'Accent5'
 
 	# add conditional formating
 	red_fill = PatternFill(bgColor="FFC7CE")

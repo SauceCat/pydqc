@@ -14,16 +14,18 @@ import seaborn as sns
 sns.set_style('white')
 
 import datetime
-from scipy.stats import pearsonr
-
-import sankey
+from scipy.stats import spearmanr
 
 import warnings
 warnings.filterwarnings('ignore')
 from matplotlib_venn import venn2
 
-from dqc_utils import _style_range
-from data_compare import _compare_key, _insert_compare_results
+from dqc_utils import (
+	_style_range, _get_scale_draw_values, _draw_texts, 
+	_adjust_column, _insert_df, _insert_numeric_results
+)
+from data_compare import _compare_key
+from data_summary import _insert_string_results
 
 
 # global color values
@@ -102,60 +104,38 @@ def numeric_consist_pretty(_df1, _df2, _key1, _key2, col, figsize=None, date_fla
 
 	df1, df2 = _df1.copy(), _df2.copy()
 	df = _df1.merge(_df2, left_on=_key1, right_on=_key2, how="inner")
-	if ((df['%s_x' %(col)].dropna().shape[0] == 0) or (df['%s_y' %(col)].dropna().shape[0] == 0)):
-		print("All values are nan in one of the 2 tables.")
-
-	corr = round(pearsonr(df['%s_x' %(col)].values, df['%s_y' %(col)].values)[0], 3)
-
-	df['diff_temp'] = df['%s_x' %(col)] - df['%s_y' %(col)]
+	df['diff_temp'] = df['%s_y' %(col)] - df['%s_x' %(col)]
 	draw_values = df['diff_temp'].dropna().values
 	origin_value_4 = [np.min(draw_values), np.mean(draw_values), np.median(draw_values), np.max(draw_values)]
+
+	# get distribution
+	scale_flg = 0
+	draw_value_4 = origin_value_4
+	if np.max([abs(origin_value_4[0]), abs(origin_value_4[3])]) >= 1000000:
+		scale_flg = 1
+		draw_values, draw_value_4 = _get_scale_draw_values(draw_values, draw_value_4)
+
+	plt.clf()
+	if figsize is not None:
+		plt.figure(figsize)
+	else:
+		plt.figure(figsize=(9, 4))
 
 	both_min = np.min([df['%s_x' %(col)].min(), df['%s_y' %(col)].min()])
 	both_max = np.max([df['%s_x' %(col)].max(), df['%s_y' %(col)].max()])
 
-	# get distribution
-	scale_flg = 0
-	if np.max(abs(draw_values)) >= 1000000:
-		scale_flg = 1
-		signs = np.sign(draw_values)
-
-		draw_values = signs * np.log10(abs(draw_values) + 1)
-		draw_value_4_signs = [np.sign(dv) for dv in origin_value_4]
-		draw_value_4_scale = [np.log10(abs(dv) + 1) for dv in origin_value_4]
-		draw_value_4 = [draw_value_4_signs[i] * draw_value_4_scale[i] for i in range(4)]
-	else:
-		draw_value_4 = origin_value_4
-
-	# draw the scatter plot
-	plt.figure(figsize=(12, 6))
-
 	plt.subplot(121)
-	plt.scatter(df['%s_x' %(col)].values, df['%s_y' %(col)].values, c=TABLE1_DARK, s=15)
+	plt.title('Scatter plot for values')
+	plt.scatter(df['%s_x' %(col)].values, df['%s_y' %(col)].values, c=TABLE1_DARK, s=5)
 	plt.plot([both_min, both_max], [both_min, both_max], '--', c='#bbbbbb')
 
 	plt.xlim(both_min, both_max)
 	plt.ylim(both_min, both_max)
 
-	plt.title('corr: %.3f' %(corr))
-
 	ax2 = plt.subplot(122)
 	sns.distplot(draw_values, color=TABLE2_DARK)
-	plt.axvline(x=draw_value_4[0], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[1], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[2], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[3], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-
 	y_low, y_up = ax2.get_ylim()
-
-	plt.text(draw_value_4[0], y_low + (y_up - y_low) * 0.2, 'min:' + str(round(origin_value_4[0], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[1], y_low + (y_up - y_low) * 0.4, 'mean:' + str(round(origin_value_4[1], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[2], y_low + (y_up - y_low) * 0.6, 'median:' + str(round(origin_value_4[2], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[3], y_low + (y_up - y_low) * 0.8, 'max:' + str(round(origin_value_4[3], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
+	_draw_texts(draw_value_4, mark=1, text_values=origin_value_4, y_low=y_low, y_up=y_up)
 
 	if date_flag:
 		plt.title('Distribution of differences (in months)')
@@ -167,81 +147,60 @@ def numeric_consist_pretty(_df1, _df2, _key1, _key2, col, figsize=None, date_fla
 	plt.show()
 
 
-"""
-function: check consistency for numeric features in both tables
-parameters:
-col: string
-	column name of the numeric feature
-_df1: pandas DataFrame
-	slice of table1 containing enough information to compare
-_df2: pandas DataFrame
-	slice of table2 containing enough information to compare
-_key1: string
-	key for table1
-_key2: string
-	key for table2
-img_dir: string
-	directory for the generated images
-date_flag: bool, default=False
-	whether it is comparing date features
-"""
 def _consist_numeric(col, _df1, _df2, _key1, _key2, img_dir, date_flag=False):
 
 	df = _df1.merge(_df2, left_on=_key1, right_on=_key2, how="inner")
-	if ((df['%s_x' %(col)].dropna().shape[0] == 0) or (df['%s_y' %(col)].dropna().shape[0] == 0)):
-		return col
+	if (df['%s_x' %(col)].dropna().shape[0] == 0) or (df['%s_y' %(col)].dropna().shape[0] == 0):
+		if (df['%s_x' %(col)].dropna().shape[0] == 0) and (df['%s_y' %(col)].dropna().shape[0] == 0):
+			error_msg = 'all nan in both table'
+		elif df['%s_x' %(col)].dropna().shape[0] == 0:
+			error_msg = 'all nan in table1'
+		else:
+			error_msg = 'all nan in table2'
+		return {'column': col, 'error_msg': error_msg}
 
-	corr = round(pearsonr(df['%s_x' %(col)].values, df['%s_y' %(col)].values)[0], 3)
+	df = df.dropna(how='any')
+	df['diff_temp'] = df['%s_y' %(col)] - df['%s_x' %(col)]
+	df['diff_per_temp'] = df.apply(lambda x : (x['%s_y' %(col)] - x['%s_x' %(col)]) * 1.0 / x['%s_x' %(col)] 
+		if x['%s_x' %(col)] != 0 else np.nan, axis=1)
+	corr = round(spearmanr(df['%s_x' %(col)].values, df['%s_y' %(col)].values)[0], 3)
 
-	df['diff_temp'] = df['%s_x' %(col)] - df['%s_y' %(col)]
+	output = [
+		{'feature': 'column', 'value': col, 'graph': 'consistency check'},
+		{'feature': 'corr', 'value': corr},
+		{'feature': 'min diff%', 'value': round(df['diff_per_temp'].min() * 100, 3)},
+		{'feature': 'mean diff%', 'value': round(df['diff_per_temp'].mean() * 100, 3)},
+		{'feature': 'median diff%', 'value': round(df['diff_per_temp'].median() * 100, 3)},
+		{'feature': 'max diff%', 'value': round(df['diff_per_temp'].max() * 100, 3)},
+	]
+
 	draw_values = df['diff_temp'].dropna().values
 	origin_value_4 = [np.min(draw_values), np.mean(draw_values), np.median(draw_values), np.max(draw_values)]
 
+	# get distribution
+	scale_flg = 0
+	draw_value_4 = origin_value_4
+	if np.max([abs(origin_value_4[0]), abs(origin_value_4[3])]) >= 1000000:
+		scale_flg = 1
+		draw_values, draw_value_4 = _get_scale_draw_values(draw_values, draw_value_4)
+
+	# draw the scatter plot
 	both_min = np.min([df['%s_x' %(col)].min(), df['%s_y' %(col)].min()])
 	both_max = np.max([df['%s_x' %(col)].max(), df['%s_y' %(col)].max()])
 
-	# get distribution
-	scale_flg = 0
-	if np.max(abs(draw_values)) >= 1000000:
-		scale_flg = 1
-		signs = np.sign(draw_values)
-
-		draw_values = signs * np.log10(abs(draw_values) + 1)
-		draw_value_4_signs = [np.sign(dv) for dv in origin_value_4]
-		draw_value_4_scale = [np.log10(abs(dv) + 1) for dv in origin_value_4]
-		draw_value_4 = [draw_value_4_signs[i] * draw_value_4_scale[i] for i in range(4)]
-	else:
-		draw_value_4 = origin_value_4
-
-	# draw the scatter plot
-	plt.figure(figsize=(12, 6))
-
+	plt.figure(figsize=(9, 4))
 	plt.subplot(121)
-	plt.scatter(df['%s_x' %(col)].values, df['%s_y' %(col)].values, c=TABLE1_DARK, s=15)
+	plt.title('Scatter plot for values')
+	plt.scatter(df['%s_x' %(col)].values, df['%s_y' %(col)].values, c=TABLE1_DARK, s=5)
 	plt.plot([both_min, both_max], [both_min, both_max], '--', c='#bbbbbb')
 
 	plt.xlim(both_min, both_max)
 	plt.ylim(both_min, both_max)
 
-	plt.title('corr: %.3f' %(corr))
-
 	ax2 = plt.subplot(122)
 	sns.distplot(draw_values, color=TABLE2_DARK)
-	plt.axvline(x=draw_value_4[0], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[1], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[2], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-	plt.axvline(x=draw_value_4[3], color=TABLE1_DARK, linestyle='--', linewidth=1.5)
-
 	y_low, y_up = ax2.get_ylim()
-
-	plt.text(draw_value_4[0], y_low + (y_up - y_low) * 0.2, 'min:' + str(round(origin_value_4[0], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[1], y_low + (y_up - y_low) * 0.4, 'mean:' + str(round(origin_value_4[1], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[2], y_low + (y_up - y_low) * 0.6, 'median:' + str(round(origin_value_4[2], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
-	plt.text(draw_value_4[3], y_low + (y_up - y_low) * 0.8, 'max:' + str(round(origin_value_4[3], 3)),
-		ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
+	_draw_texts(draw_value_4, mark=1, text_values=origin_value_4, y_low=y_low, y_up=y_up)
 
 	if date_flag:
 		plt.title('Distribution of differences (in months)')
@@ -252,97 +211,43 @@ def _consist_numeric(col, _df1, _df2, _key1, _key2, img_dir, date_flag=False):
 
 	# save the graphs
 	plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
+	return {'column': col, 'result_df': pd.DataFrame(output), 'corr': {'column': col, 'corr': corr}}
 
 
-"""
-function: check consistency for string features in both tables
-parameters:
-col: string
-	column name of the string feature
-_df1: pandas DataFrame
-	slice of table1 containing enough information to compare
-_df2: pandas DataFrame
-	slice of table2 containing enough information to compare
-_key1: string
-	key for table1
-_key2: string
-	key for table2
-img_dir: string
-	directory for the generated images
-"""
 def _consist_string(col, _df1, _df2, _key1, _key2, img_dir):
 
 	df = _df1.merge(_df2, left_on=_key1, right_on=_key2, how="inner")
-	if ((df['%s_x' %(col)].dropna().shape[0] == 0) or (df['%s_y' %(col)].dropna().shape[0] == 0)):
-		return col
+	if (df['%s_x' %(col)].dropna().shape[0] == 0) or (df['%s_y' %(col)].dropna().shape[0] == 0):
+		if (df['%s_x' %(col)].dropna().shape[0] == 0) and (df['%s_y' %(col)].dropna().shape[0] == 0):
+			error_msg = 'all nan in both table'
+		elif df['%s_x' %(col)].dropna().shape[0] == 0:
+			error_msg = 'all nan in table1'
+		else:
+			error_msg = 'all nan in table2'
+		return {'column': col, 'error_msg': error_msg}
 
+	df = df.dropna(how='all', subset=['%s_x' %(col), '%s_y' %(col)])
 	df['diff_temp'] = df[['%s_x' %(col), '%s_y' %(col)]].apply(lambda x: "Same" 
 		if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
 
-	corr = df[df['diff_temp'] == "Same"].shape[0] * 1.0 / df.shape[0]
+	corr = round(df[df['diff_temp'] == "Same"].shape[0] * 1.0 / df.shape[0], 3)
+	output = [
+		{'feature': 'column', 'value': col},
+		{'feature': 'corr', 'value': corr}
+	]
 
-	pie_values = [df[df['diff_temp'] == 'Same'].shape[0], df[df['diff_temp'] == 'Diff'].shape[0]]
-	pie_labels = ['Same: %.3f' %(pie_values[0] * 1.0 / np.sum(pie_values)), 
-				  'Diff: %.3f' %(pie_values[1] * 1.0 / np.sum(pie_values))]
-	pie_colors = [TABLE1_LIGHT, TABLE2_LIGHT]
+	if corr == 1:
+		return {'column': col, 'result_df': [pd.DataFrame(output), pd.DataFrame()], 'corr': {'column': col, 'corr': corr}}
+	else:
+		diff_df = df[df['diff_temp'] == "Diff"].reset_index(drop=True)
+		diff_df['diff_combo'] = diff_df['%s_x' %(col)].map(str) + ' -> ' + diff_df['%s_y' %(col)].map(str)
+		diff_df_vc = pd.DataFrame(diff_df['diff_combo'].value_counts())
+		diff_df_vc.columns = ['count']
+		diff_df_vc['diff_combo'] = diff_df_vc.index.values
+		diff_df_vc = diff_df_vc.sort_values(by='count', ascending=False).head(10)[['diff_combo', 'count']]
 
-	plt.figure(figsize=(12, 6))
-	plt.subplot(121)
-	plt.pie(x=pie_values, labels=pie_labels, colors=pie_colors, radius=0.6)
-	plt.title('consist rate: %.3f' %(corr))
-	
-	if np.max([df['%s_x' %(col)].nunique(), df['%s_y' %(col)].nunique()]) <= 20:
-		plt.subplot(122)
-		sankey.sankey(left=df['%s_x' %(col)], right=df['%s_y' %(col)], fontsize=10,
-						leftLabels=sorted(df['%s_x' %(col)].unique()), 
-						rightLabels=sorted(df['%s_y' %(col)].unique()), aspect=2)
-
-		plt.title('corr: %.3f' %(corr))
-
-	# save the graphs
-	plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
-
-
-"""
-function: write results to worksheet
-parameters:
-features: list
-	all checked features
-error_features: list
-	all features with errors
-ws: excel worksheet
-	worksheet to write on
-col_height: integer
-	height of column for this worksheet
-img_dir: string
-	directory for the generated images
-"""
-def _insert_consist_results(features, error_features, ws, col_height, img_dir):
-	# construct the thick border
-	thick = Side(border_style="thick", color="000000")
-	border = Border(top=thick, left=thick, right=thick, bottom=thick)
-
-	# loop and output the results
-	for feat in features:
-		ws.append([feat])
-		ws["A%d" %(ws.max_row)].style = 'Accent5'
-		ws.row_dimensions[ws.max_row].height = 30
-
-		if feat in error_features:
-			ws.append(['column error: values are all nan in one of the tables.'])
-		else:
-			img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(feat)))
-			ws.add_image(img, 'A%d' %(ws.max_row+1))
-			ws.row_dimensions[ws.max_row+1].height = 320
-
-		# draw the thick outline border
-		_style_range(ws, 'A%d:A%d'%(ws.max_row, ws.max_row + 1), border=border)
-		
-		# add gap
-		ws.append([''])
-		ws.append([''])
-
-	ws.column_dimensions['A'].width = 125
+		return {'column': col, 'result_df': [pd.DataFrame(output), diff_df_vc], 
+				'corr': {'column': col, 'corr': corr}}
 
 
 """
@@ -375,11 +280,13 @@ dtype_colname2: string, default='type'
 	name of the column for data type of _table2
 output_root: string, default=''
 	the root directory for the output file
+keep_images: boolean, default=False
+	whether to keep all generated images
 n_jobs: int, default=1
 	the number of jobs to run in parallel
 """
 def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', 
-	feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', n_jobs=1):
+	feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', keep_images=False, n_jobs=1):
 
 	# check _table1 and _table2
 	if type(_table1) != pd.core.frame.DataFrame:
@@ -503,37 +410,54 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 	string_features = schema_correct[schema_correct['type_1'] == 'str']['column_1'].values
 	date_features = schema_correct[schema_correct['type_1'] == 'date']['column_1'].values
 
+	corr_results = []
+
 	# for key features
 	# only check features in both tables
 	key_features = [feat for feat in key_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(key_features) > 0:
 		key_results = Parallel(n_jobs=n_jobs)(delayed(_compare_key)(col, table1[[col]], table2[[col]], img_dir) 
 			for col in key_features)
+
+		for key_result in key_results:
+			if 'corr' in key_result.keys():
+				corr_results.append(key_result['corr'])
+
 		# write all results to worksheet
 		ws = wb.create_sheet(title='key')
-		_insert_compare_results(key_results, ws, 40, img_dir)
+		_insert_numeric_results(key_results, ws, 40, img_dir)
 
 
 	# for numeric features
 	# only check features in both tables
 	numeric_features = [feat for feat in numeric_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(numeric_features) > 0:
-		error_numeric_cols = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], table2[[_key2, col]], _key1, _key2, img_dir) 
-			for col in numeric_features)
+		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], 
+			table2[[_key2, col]], _key1, _key2, img_dir) for col in numeric_features)
+
+		for numeric_result in numeric_results:
+			if 'corr' in numeric_result.keys():
+				corr_results.append(numeric_result['corr'])
+
 		# write all results to worksheet
 		ws = wb.create_sheet(title='numeric')
-		_insert_consist_results(numeric_features, error_numeric_cols, ws, 40, img_dir)
+		_insert_numeric_results(numeric_results, ws, 45, img_dir)
 
 
 	# for string features
 	# only check features in both tables
 	string_features = [feat for feat in string_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(string_features) > 0:
-		error_string_cols = Parallel(n_jobs=n_jobs)(delayed(_consist_string)(col, table1[[_key1, col]], table2[[_key2, col]], _key1, _key2, img_dir) 
-			for col in string_features)
+		string_results = Parallel(n_jobs=n_jobs)(delayed(_consist_string)(col, table1[[_key1, col]], 
+			table2[[_key2, col]], _key1, _key2, img_dir) for col in string_features)
+
+		for string_result in string_results:
+			if 'corr' in string_result.keys():
+				corr_results.append(string_result['corr'])
+
 		# write all results to worksheet
 		ws = wb.create_sheet(title='string')
-		_insert_consist_results(string_features, error_string_cols, ws, 40, img_dir)
+		_insert_string_results(string_results, ws, 25)
 
 
 	# for date features
@@ -547,32 +471,43 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
 			table2[col] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table2[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
-		error_date_cols = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], table2[[_key2, col]], 
+		date_results = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], table2[[_key2, col]], 
 			_key1, _key2, img_dir, date_flag=True) for col in date_features)
+
+		for date_result in date_results:
+			if 'corr' in date_result.keys():
+				corr_results.append(date_result['corr'])
+
 		# write all results to worksheet
 		ws = wb.create_sheet(title='date')
-		_insert_consist_results(date_features, error_date_cols, ws, 40, img_dir)
+		_insert_numeric_results(date_results, ws, 45, img_dir, date_flag=True)
 
 
-	# insert error
+	# insert the summary 
 	ws = wb['Sheet']
-	wb.remove(ws)
+	ws.title = 'summary'
+	summary_df = schema_correct[['column_1', 'type_1']].rename(columns={'column_1': 'column', 'type_1': 'type'})
+	corr_df = pd.DataFrame(corr_results)
+	summary_df = summary_df.merge(corr_df, on='column', how='left')
+	summary_df['corr'] = summary_df['corr'].fillna('error')
+	summary_df['error_flg'] = summary_df['corr'].apply(lambda x : 1 if x == 'error' else 0)
+	error_rows = summary_df[summary_df['error_flg'] == 1].index.values
+
+	_ = _insert_df(summary_df[['column', 'type', 'corr']], ws, header=True)
+
+	for r_idx in error_rows:
+		ws['C%d' %(r_idx + 2)].style = 'Bad'
+	_adjust_column(ws, 25)
 
 	# if there are some errors
 	if len(schema_error) > 0:
 		ws = wb.create_sheet(title='error')
-
-		for r_idx, r in enumerate(dataframe_to_rows(schema_error, index=False, header=True)):
-			ws.append(r)
-			for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-				for cell in col:
-					if r_idx == 0:
-						cell.font = Font(name='Calibri', size=11, bold=True)
-					else:
-						cell.font = Font(name='Calibri', size=11)
+		_ = _insert_df(schema_error, ws, header=True)
+		_adjust_column(ws, 25)
 
 	wb.save(filename=os.path.join(output_root, 'data_consist_%s.xlsx' %(fname)))
-	shutil.rmtree(img_dir)
+	if not keep_images:
+		shutil.rmtree(img_dir)
 
 
 """
@@ -592,8 +527,6 @@ _schema2: pandas DataFrame
 	data schema (contains column names and corresponding data types) for _table2
 fname: string
 	the output file name
-sample: boolean, default=False
-	whether to do sampling on the original data
 feature_colname1: string, default='column'
 	name of the column for feature of _table1
 feature_colname2: string, default='column'
@@ -605,8 +538,8 @@ dtype_colname2: string, default='type'
 output_root: string, default=''
 	the root directory for the output file
 """
-def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, sample=False, feature_colname1='column', feature_colname2='column', 
-	dtype_colname1='type', dtype_colname2='type', output_root=''):
+def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, 
+	feature_colname1='column', feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root=''):
 
 	# check _table1 and _table2
 	if type(_table1) != pd.core.frame.DataFrame:
@@ -638,10 +571,6 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
 	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
 		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
-
-	# check sample
-	if type(sample) != bool:
-		raise ValueError('sample: only accept boolean values')
 
 	# check fname
 	if type(fname) != str:
@@ -707,9 +636,9 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 		outbook.write('"""\n\n')
 		
 		packages = ['import pandas as pd', 'import numpy as np', '\nimport datetime',
-		'\nfrom scipy.stats import pearsonr\n', 'import matplotlib.pyplot as plt', 
+		'\nfrom scipy.stats import spearmanr\n', 'import matplotlib.pyplot as plt', 
 		'import seaborn as sns', 'sns.set_style("white")', 'from matplotlib_venn import venn2','\n%matplotlib inline', 
-		'\nimport sankey', '\nfrom pydqc.data_consist import numeric_consist_pretty']
+		'\nfrom pydqc.data_consist import numeric_consist_pretty']
 
 		outbook.write('\n'.join(packages))
 
@@ -727,10 +656,6 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 		outbook.write('key1 = \n')
 		outbook.write('key2 = \n\n')
 
-		if sample:
-			outbook.write('#the sample size (can be integer or float <= 1.0)\n')
-			outbook.write('sample_size =\n\n')
-
 		outbook.write('#global values\n')
 		outbook.write('TABLE1_DARK = "#4BACC6"\n')
 		outbook.write('TABLE1_LIGHT = "#DAEEF3"\n')
@@ -740,20 +665,6 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 		outbook.write('#get date of today\n')
 		outbook.write('snapshot_date_now = str(datetime.datetime.now().date())\n')
 		outbook.write('print("date of today: " + snapshot_date_now)\n')
-
-		# check and calculate sample size if sample=True
-		if sample:
-			outbook.write('\n"""\n')
-			outbook.write('## calculate the sample size\n\n')
-			outbook.write('"""\n\n')
-			outbook.write('if sample_size <= 1.0:\n')
-			outbook.write('    sample_size1 = int(table1.shape[0] * sample_size)\n')
-			outbook.write('    sample_size2 = int(table2.shape[0] * sample_size)\n')
-			outbook.write('    sample_size = np.min([sample_size1, sample_size2])\n')
-			outbook.write('    print(sample_size)\n')
-			outbook.write('else:\n')
-			outbook.write('    if sample_size > np.min([table1.shape[0], table2.shape[0]]):\n')
-			outbook.write('        raise ValueError("sample_size: should be smaller or equal to len(table1) and len(table2)")\n')
 
 		# output potentail exist errors
 		if len(schema_error) > 0:
@@ -779,25 +690,18 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 			outbook.write('"""\n\n')
 
 			outbook.write('col="%s"\n' %(col))
-			if (sample) and (col_type != 'key'):
-				if col in [_key1, _key2]:
-					outbook.write('df1 = table1[[col]].copy().sample(sample_size).reset_index(drop=True)\n')
-					outbook.write('df2 = table2[[col]].copy().sample(sample_size).reset_index(drop=True)\n\n')
-				else:
-					outbook.write('df1 = table1[[key1, col]].copy().sample(sample_size).reset_index(drop=True)\n')
-					outbook.write('df2 = table2[[key2, col]].copy().sample(sample_size).reset_index(drop=True)\n\n')
+
+			if col in [_key1, _key2]:
+				outbook.write('df1 = table1[[col]].copy()\n')
+				outbook.write('df2 = table2[[col]].copy()\n\n')
 			else:
-				if col in [_key1, _key2]:
-					outbook.write('df1 = table1[[col]].copy()\n')
-					outbook.write('df2 = table2[[col]].copy()\n\n')
-				else:
-					outbook.write('df1 = table1[[key1, col]].copy()\n')
-					outbook.write('df2 = table2[[key2, col]].copy()\n\n')
-				if col_type == 'date':
-					outbook.write('df1[col] = pd.to_datetime(df1[col], errors="coerce")\n')
-					outbook.write('df1[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df1[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
-					outbook.write('df2[col] = pd.to_datetime(df2[col], errors="coerce")\n')
-					outbook.write('df2[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df2[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
+				outbook.write('df1 = table1[[key1, col]].copy()\n')
+				outbook.write('df2 = table2[[key2, col]].copy()\n\n')
+			if col_type == 'date':
+				outbook.write('df1[col] = pd.to_datetime(df1[col], errors="coerce")\n')
+				outbook.write('df1[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df1[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
+				outbook.write('df2[col] = pd.to_datetime(df2[col], errors="coerce")\n')
+				outbook.write('df2[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df2[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
 
 			# for key and str, compare intersection
 			if col_type == 'key':
@@ -826,44 +730,28 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 				outbook.write('"""\n\n')
 				outbook.write('# merge 2 tables\n')
 				outbook.write('df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")\n')
-				outbook.write('if ((df[col + "_x"].dropna().shape[0] == 0) or (df[col + "_y"].dropna().shape[0] == 0)):\n')
-				outbook.write('    print("All values are nan in one of the 2 tables.")\n\n')
+				outbook.write('df = df.dropna(how="all", subset=["%s_x" %(col), "%s_y" %(col)])\n\n')
 
 				outbook.write('# calculate consistency\n')
 				outbook.write('df["diff_temp"] = df[[col + "_x", col + "_y"]].apply(lambda x: "Same" if x[col + "_x"] == x[col + "_y"] else "Diff", axis=1)\n')
-				outbook.write('corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]\n\n')
-
-				outbook.write('\n"""\n')
-				outbook.write('#### draw graphs\n\n')
-				outbook.write('"""\n\n')
-
-				outbook.write('# prepare data\n')
-				outbook.write('pie_values = [df[df["diff_temp"] == "Same"].shape[0], df[df["diff_temp"] == "Diff"].shape[0]]\n')
-				outbook.write('pie_labels = ["Same: %.3f" %(pie_values[0] * 1.0 / np.sum(pie_values)), "Diff: %.3f" %(pie_values[1] * 1.0 / np.sum(pie_values))]\n')
-				outbook.write('pie_colors = [TABLE1_LIGHT, TABLE2_LIGHT]\n\n')
-
-				outbook.write('# draw\n')
-				outbook.write('plt.figure(figsize=(12, 6))\n')
-				outbook.write('plt.subplot(121)\n')
-				outbook.write('plt.pie(x=pie_values, labels=pie_labels, colors=pie_colors, radius=0.6)\n')
-				outbook.write('plt.title("consist rate: %.3f" %(corr))\n\n')
-
-				outbook.write('if np.max([df[col + "_x"].nunique(), df[col + "_y"].nunique()]) <= 20:\n')
-				outbook.write('    plt.subplot(122)\n')
-				outbook.write('    sankey.sankey(left=df[col + "_x"], right=df[col + "_y"], fontsize=10, leftLabels=sorted(df[col + "_x"].unique()), rightLabels=sorted(df[col + "_y"].unique()), aspect=2)\n')
-				outbook.write('    plt.title("corr: %.3f" %(corr))\n')
+				outbook.write('corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]\n')
+				outbook.write('print("consistency rate: " + str(corr))\n\n')
 			else:
 				outbook.write('\n"""\n')
 				outbook.write('#### check pairwise consistency\n\n')
 				outbook.write('"""\n\n')
 				outbook.write('# merge 2 tables\n')
 				outbook.write('df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")\n')
-				outbook.write('if ((df[col + "_x"].dropna().shape[0] == 0) or (df[col + "_y"].dropna().shape[0] == 0)):\n')
-				outbook.write('    print("All values are nan in one of the 2 tables.")\n')
-				outbook.write('corr = round(pearsonr(df[col + "_x"].values, df[col + "_y"].values)[0], 3)\n\n')
+				outbook.write('df = df.dropna(how="any")\n')
+				outbook.write('corr = round(spearmanr(df[col + "_x"].values, df[col + "_y"].values)[0], 3)\n')
+				outbook.write('print("consistency rate: " + str(corr))\n\n')
+
+				outbook.write('\n"""\n')
+				outbook.write('#### draw consistency graph\n\n')
+				outbook.write('"""\n\n')
 
 				outbook.write('# prepare data\n')
-				outbook.write('df["diff_temp"] = df[col + "_x"] - df[col + "_y"]\n')
+				outbook.write('df["diff_temp"] = df[col + "_y"] - df[col + "_x"]\n')
 				outbook.write('draw_values = df["diff_temp"].dropna().values\n\n')
 
 				outbook.write('both_min = np.min([df[col + "_x"].min(), df[col + "_y"].min()])\n')
@@ -872,7 +760,7 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 				outbook.write('# draw\n')
 				outbook.write('plt.figure(figsize=(12, 6))\n')
 				outbook.write('plt.subplot(121)\n')
-				outbook.write('plt.scatter(df[col + "_x"].values, df[col + "_y"].values, c=TABLE1_DARK, s=15)\n')
+				outbook.write('plt.scatter(df[col + "_x"].values, df[col + "_y"].values, c=TABLE1_DARK, s=5)\n')
 				outbook.write('plt.plot([both_min, both_max], [both_min, both_max], "--", c="#bbbbbb")\n')
 				outbook.write('plt.xlim(both_min, both_max)\n')
 				outbook.write('plt.ylim(both_min, both_max)\n')

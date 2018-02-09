@@ -4,10 +4,8 @@ import os
 import shutil
 
 import openpyxl
-from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.formatting.rule import ColorScaleRule, FormulaRule, DataBar, FormatObject, Rule
-import xlsxwriter
 
 import datetime
 
@@ -16,7 +14,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 sns.set_style('white')
 
-from dqc_utils import _style_range
+from dqc_utils import (
+	_style_range, _get_scale_draw_values, _draw_texts, 
+	_adjust_column, _insert_df, _insert_numeric_results
+)
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -93,17 +95,11 @@ def distribution_summary_pretty(_value_df, col, figsize=None, date_flag=False):
 
 	# get distribution
 	scale_flg = 0
+	draw_values = value_dropna
+	draw_value_4 = [value_min, value_mean, value_median, value_max]
 	if np.max([abs(value_min), abs(value_max)]) >= 1000000:
 		scale_flg = 1
-		signs = np.sign(value_dropna)
-		draw_values = signs * np.log10(abs(value_dropna) + 1)
-
-		draw_value_4_signs = [np.sign(value_min), np.sign(value_mean), np.sign(value_median), np.sign(value_max)]
-		draw_value_4_scale = [np.log10(abs(value_min+1)), np.log10(abs(value_mean+1)), np.log10(abs(value_median+1)), np.log10(abs(value_max+1))]
-		draw_value_4 = [draw_value_4_signs[i] * draw_value_4_scale[i] for i in range(4)]
-	else:
-		draw_values = value_dropna
-		draw_value_4 = [value_min, value_mean, value_median, value_max]
+		draw_values, draw_value_4 = _get_scale_draw_values(draw_values, draw_value_4)
 
 	# draw and save distribution graph
 	plt.clf()
@@ -125,43 +121,15 @@ def distribution_summary_pretty(_value_df, col, figsize=None, date_flag=False):
 			plt.xticks(rotation=90)
 	else:
 		ax = sns.distplot(draw_values, color=DIS_LINE, norm_hist=True, hist=False)
-		plt.axvline(x=draw_value_4[0], color=VER_LINE, linestyle='--', linewidth=1.5)
-		plt.axvline(x=draw_value_4[3], color=VER_LINE, linestyle='--', linewidth=1.5)
-
 		y_low, y_up = ax.get_ylim()
+
 		if date_flag:
-			plt.text(draw_value_4[0], y_low + (y_up-y_low)*0.2,'max:' + str(date_max), 
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-			plt.text(draw_value_4[3], y_low + (y_up-y_low)*0.8,'min:' + str(date_min), 
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
+			_draw_texts(draw_value_4, mark=1, text_values=[date_min, date_max], y_low=y_low, y_up=y_up, date_flag=True)
 		else:
-			plt.text(draw_value_4[0], y_low + (y_up-y_low)*0.2,'min:' + str(round(value_min, 3)),
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-			plt.text(draw_value_4[1], y_low + (y_up-y_low)*0.4,'mean:' + str(round(value_mean, 3)),
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-			plt.text(draw_value_4[2], y_low + (y_up-y_low)*0.6,'median:' + str(round(value_median, 3)),
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-			plt.text(draw_value_4[3], y_low + (y_up-y_low)*0.8,'max:' + str(round(value_max, 3)),
-				ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-			plt.axvline(x=draw_value_4[1], color=VER_LINE, linestyle='--', linewidth=1.5)
-			plt.axvline(x=draw_value_4[2], color=VER_LINE, linestyle='--', linewidth=1.5)
+			_draw_texts(draw_value_4, mark=1, text_values=[value_min, value_mean, value_median, value_max], y_low=y_low, y_up=y_up)
 	plt.show()
 
 
-"""
-function: check numeric features
-parameters:
-col: string
-	name of column to check
-_value_df: pandas DataFrame
-	slice of dataframe containing enough information to check
-sample_size: integer
-	number of sample rows to check on
-img_dir: string
-	directory for the generated images
-date_flag: bool, default=False
-	whether it is checking date features
-"""
 def _check_numeric(col, _value_df, img_dir, date_flag=False):
 
 	value_df = _value_df.copy()
@@ -172,27 +140,16 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 	# percentage of nan
 	nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 
-	# unique_level
-	num_uni = value_df[col].dropna().nunique()
-
-	# get clean values
-	value_dropna = value_df[col].dropna().values
-
 	# if all values are nan
 	if nan_rate == 1:
-		output = [
-			{'feature': 'column', 'value': col, 'graph': 'Distribution'},
-			{'feature': 'description', 'value': ''},
-			{'feature': 'sample_value', 'value': np.nan},
-			{'feature': 'nan_rate', 'value': nan_rate},
-			{'feature': 'num_uni', 'value': '%d/%d' %(num_uni, len(value_dropna))},
-			{'feature': 'value_min', 'value': np.nan},
-			{'feature': 'value_mean', 'value': np.nan},
-			{'feature': 'value_median', 'value': np.nan},
-			{'feature': 'value_max', 'value': np.nan},
-		]
-		return {'column': col, 'result_df': pd.DataFrame(output)}
+		return {'column': col, 'error_msg': 'all values are nan'}
 	else:
+		# unique_level
+		num_uni = value_df[col].dropna().nunique()
+
+		# get clean values
+		value_dropna = value_df[col].dropna().values
+
 		# get sample value
 		sample_value = np.random.choice(value_dropna, 1)[0]
 
@@ -207,17 +164,11 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 
 		# get distribution
 		scale_flg = 0
+		draw_values = value_dropna
+		draw_value_4 = [value_min, value_mean, value_median, value_max]
 		if np.max([abs(value_min), abs(value_max)]) >= 1000000:
 			scale_flg = 1
-			signs = np.sign(value_dropna)
-			draw_values = signs * np.log10(abs(value_dropna) + 1)
-
-			draw_value_4_signs = [np.sign(value_min), np.sign(value_mean), np.sign(value_median), np.sign(value_max)]
-			draw_value_4_scale = [np.log10(abs(value_min+1)), np.log10(abs(value_mean+1)), np.log10(abs(value_median+1)), np.log10(abs(value_max+1))]
-			draw_value_4 = [draw_value_4_signs[i] * draw_value_4_scale[i] for i in range(4)]
-		else:
-			draw_values = value_dropna
-			draw_value_4 = [value_min, value_mean, value_median, value_max]
+			draw_values, draw_value_4 = _get_scale_draw_values(draw_values, draw_value_4)
 
 		# draw and save distribution graph
 		plt.figure(figsize=(9, 4.5))
@@ -234,33 +185,18 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 				plt.xticks(rotation=90)
 		else:
 			ax = sns.distplot(draw_values, color=DIS_LINE, norm_hist=True, hist=False)
-			plt.axvline(x=draw_value_4[0], color=VER_LINE, linestyle='--', linewidth=1.5)
-			plt.axvline(x=draw_value_4[3], color=VER_LINE, linestyle='--', linewidth=1.5)
-
 			y_low, y_up = ax.get_ylim()
+
 			if date_flag:
-				plt.text(draw_value_4[0], y_low + (y_up-y_low)*0.2,'max:' + str(date_max), 
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-				plt.text(draw_value_4[3], y_low + (y_up-y_low)*0.8,'min:' + str(date_min), 
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
+				_draw_texts(draw_value_4, mark=1, text_values=[date_min, date_max], y_low=y_low, y_up=y_up, date_flag=True)
 			else:
-				plt.text(draw_value_4[0], y_low + (y_up-y_low)*0.2,'min:' + str(round(value_min, 3)),
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-				plt.text(draw_value_4[1], y_low + (y_up-y_low)*0.4,'mean:' + str(round(value_mean, 3)),
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-				plt.text(draw_value_4[2], y_low + (y_up-y_low)*0.6,'median:' + str(round(value_median, 3)),
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-				plt.text(draw_value_4[3], y_low + (y_up-y_low)*0.8,'max:' + str(round(value_max, 3)),
-					ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TEXT_LIGHT, edgecolor='none'))
-				plt.axvline(x=draw_value_4[1], color=VER_LINE, linestyle='--', linewidth=1.5)
-				plt.axvline(x=draw_value_4[2], color=VER_LINE, linestyle='--', linewidth=1.5)
+				_draw_texts(draw_value_4, mark=1, text_values=[value_min, value_mean, value_median, value_max], y_low=y_low, y_up=y_up)
 
 		# save the graphs
 		plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
 
 		output = [
 			{'feature': 'column', 'value': col, 'graph': 'Distribution'},
-			{'feature': 'description', 'value': ''},
 			{'feature': 'sample_value', 'value': sample_value},
 			{'feature': 'nan_rate', 'value': nan_rate},
 			{'feature': 'num_uni', 'value': '%d/%d' %(num_uni, len(value_dropna))},
@@ -277,16 +213,6 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 		return {'column': col, 'result_df': pd.DataFrame(output)}
 
 
-"""
-function: check string features
-parameters:
-col: string
-	name of the column to check
-_value_df: pandas DataFrame
-	slice of dataframe containing enough information to check
-sample_size: integer
-	number of sample rows to check on
-"""
 def _check_string(col, _value_df):
 	
 	value_df = _value_df.copy()
@@ -294,38 +220,26 @@ def _check_string(col, _value_df):
 	# percentage of nan
 	nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 
-	# unique_level
-	num_uni = value_df[col].dropna().nunique()
-
-	# get clean values
-	value_dropna = value_df[col].dropna().values
-
 	# if all sample values are nan
 	if nan_rate == 1:
-		output = [
-			{'feature': 'column', 'value': col},
-			{'feature': 'description', 'value': ''},
-			{'feature': 'sample_value', 'value': np.nan},
-			{'feature': 'nan_rate', 'value': nan_rate},
-			{'feature': 'num_uni', 'value': '%d/%d' %(num_uni, len(value_dropna))}
-		]
-		return {'column': col, 'result_df': [pd.DataFrame(output), pd.DataFrame()]}
-		
+		return {'column': col, 'error_msg': 'all values are nan'}
 	else:
+		# unique_level
+		num_uni = value_df[col].dropna().nunique()
+
+		# get clean values
+		value_dropna = value_df[col].dropna().values
+
 		# get sample value
 		sample_value = np.random.choice(value_dropna, 1)[0]
 
 		# get the top 10 value counts
-		value_counts_df = pd.DataFrame(pd.Series(value_dropna).value_counts())
-		value_counts_df.columns = ['count']
+		value_counts_df = pd.DataFrame(pd.Series(value_dropna).value_counts(), columns=['count'])
 		value_counts_df[col] = value_counts_df.index.values
-		value_counts_df = value_counts_df.reset_index(drop=True)
-		value_counts_df = value_counts_df[[col, 'count']]
-		value_counts_df = value_counts_df.sort_values(by='count', ascending=False).head(10)
+		value_counts_df = value_counts_df.sort_values(by='count', ascending=False).head(10)[[col, 'count']]
 
 		output = [
 			{'feature': 'column', 'value': col},
-			{'feature': 'description', 'value': ''},
 			{'feature': 'sample_value', 'value': sample_value},
 			{'feature': 'nan_rate', 'value': nan_rate},
 			{'feature': 'num_uni', 'value': '%d/%d' %(num_uni, len(value_dropna))}
@@ -333,144 +247,42 @@ def _check_string(col, _value_df):
 		return {'column': col, 'result_df': [pd.DataFrame(output), value_counts_df]}
 
 
-"""
-function: check date features
-parameters:
-col: string
-	name of column to check
-_value_df: pandas DataFrame
-	slice of dataframe containing enough information to check
-sample_size: integer
-	number of sample rows to check on
-img_dir: string
-	directory for the generated images
-"""
 def _check_date(col, value_df, img_dir):
 
 	numeric_output = _check_numeric(col, value_df, img_dir, date_flag=True)
 	col = numeric_output['column']
-	result_df = numeric_output['result_df']
-	result_df.loc[result_df['feature']=='column', 'value'] = col.replace('_numeric', '')
-	result_df.loc[0, 'graph'] = 'Distribution (months)'
+	if 'result_df' in numeric_output.keys():
+		result_df = numeric_output['result_df']
+		result_df.loc[result_df['feature']=='column', 'value'] = col.replace('_numeric', '')
+		result_df.loc[0, 'graph'] = 'Distribution (months)'
 
-	return {'column': col.replace('_numeric', ''), 'result_df': result_df}
-
-
-"""
-function: insert results into worksheet (for numeric features)
-parameters:
-string_results: dict
-	dictionary containing all results
-ws: excel worksheet
-	worksheet to write on
-col_height: integer
-	height of column for this worksheet
-img_dir: string
-	directory for the generated images
-date_flag: bool, default=False
-	whether it is date feature
-"""
-def _insert_numeric_results(numeric_results, ws, col_height, img_dir, date_flag=False):
-	# construct the thick border
-	thick = Side(border_style="thick", color="000000")
-	border = Border(top=thick, left=thick, right=thick, bottom=thick)
-
-	# loop and output the results
-	for result in numeric_results:
-		column = result['column']
-		result_df = result['result_df']
-		result_df = result_df[['feature', 'value', 'graph']]
-
-		for r_idx, r in enumerate(dataframe_to_rows(result_df, index=False, header=False)):
-			ws.append(r)
-			for col_idx, col in enumerate(ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row)):
-				for cell in col:
-					if r_idx == 0:
-						cell.style = 'Accent5'
-						head_row = ws.max_row
-					else:
-						if col_idx == 0:
-							cell.font = Font(name='Calibri', size=11, bold=True)
-						else:
-							cell.font = Font(name='Calibri', size=11)
-
-		# merge cells for the graph
-		ws.merge_cells('C%d:C%d' %(head_row+1, head_row+result_df.shape[0]-1))
-		# draw the thick outline border
-		_style_range(ws, 'A%d:C%d'%(head_row, head_row+result_df.shape[0]-1), border=border)
-		ws['C%d' %(head_row+1)].border = Border(top=None, left=None, right=thick, bottom=thick)
-		
-		# add gap
-		ws.append([''])
-		ws.append([''])
-
-		# insert graph
-		try:
-			if date_flag:
-				img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %('%s_numeric' %(column))))
-			else:
-				img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(column)))
-			ws.add_image(img, 'C%d' %(head_row+1))
-		except:
-			continue
-
-	# adjust worksheet
-	_adjust_column(ws, col_height)
-	ws.column_dimensions['C'].width = 90
+		return {'column': col.replace('_numeric', ''), 'result_df': result_df}
+	else:
+		return {'column': col.replace('_numeric', ''), 'error_msg': numeric_output['error_msg']}
 
 
-"""
-function: insert results into worksheet (for string features)
-parameters:
-string_results: dict
-	dictionary containing all results
-ws: excel worksheet
-	worksheet to write on
-col_height: integer
-	height of column for this worksheet
-"""
 def _insert_string_results(string_results, ws, col_height):
-	# construct thick border
-	thick = Side(border_style="thick", color="000000")
-	border = Border(top=thick, left=thick, right=thick, bottom=thick)
+	# construct thin border
+	thin = Side(border_style="thin", color="000000")
+	border = Border(top=thin, left=thin, right=thin, bottom=thin)
 
 	# loop and output result
 	for result in string_results:
 		column = result['column']
+		if not 'result_df' in result.keys():
+			ws.append([column, result['error_msg']])
+			for col in ['A', 'B']:
+				ws['%s%d' %(col, ws.max_row)].style = 'Bad'
+			ws.append([''])
+			continue
 		result_df = result['result_df'][0]
 		value_counts_df = result['result_df'][1]
-
-		for r_idx, r in enumerate(dataframe_to_rows(result_df, index=False, header=False)):
-			ws.append(r)
-			for col_idx, col in enumerate(ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row)):
-				for cell in col:
-					if r_idx == 0:
-						cell.style = 'Accent5'
-						head_row = ws.max_row
-					else:
-						if col_idx == 0:
-							cell.font = Font(name='Calibri', size=11, bold=True)
-						else:
-							cell.font = Font(name='Calibri', size=11)
+		head_row = _insert_df(result_df, ws)
 
 		# if there is value counts result
 		if len(value_counts_df) > 0:
-			ws.append(['Top 10 value counts'])
-
-			ws['A%d' %(ws.max_row)].font = Font(name='Calibri', size=11)
-			ws['A%d' %(ws.max_row)].style = '20 % - Accent5'
-			ws['B%d' %(ws.max_row)].style = '20 % - Accent5'
-
-			for r_idx, r in enumerate(dataframe_to_rows(value_counts_df, index=False, header=False)):
-				ws.append(r)
-				if r_idx == 0:
-					databar_head = ws.max_row
-				for col_idx, col in enumerate(ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row)):
-					for cell in col:
-						if col_idx == 0:
-							cell.font = Font(name='Calibri', size=11, bold=True)
-						else:
-							cell.font = Font(name='Calibri', size=11)
+			value_counts_df = value_counts_df.rename(columns={column: 'top 10 values'})
+			databar_head = _insert_df(value_counts_df, ws, header=True, head_style='60 % - Accent5')
 
 			# add conditional formatting: data bar
 			first = FormatObject(type='min')
@@ -479,55 +291,18 @@ def _insert_string_results(string_results, ws, col_height):
 
 			# assign the data bar to a rule
 			rule = Rule(type='dataBar', dataBar=data_bar)
-			ws.conditional_formatting.add('B%d:B%d' %(databar_head, databar_head+len(value_counts_df)-1), rule)
+			ws.conditional_formatting.add('B%d:B%d' %(databar_head, databar_head+len(value_counts_df)), rule)
 
 			# draw the thick outline border
-			_style_range(ws, 'A%d:B%d'%(head_row, databar_head+len(value_counts_df)-1), border=border)
+			_style_range(ws, 'A%d:B%d'%(head_row, databar_head+len(value_counts_df)), border=border)
 		else:
 			_style_range(ws, 'A%d:B%d'%(head_row, head_row+result_df.shape[0]-1), border=border)
 			
 		# add gap
 		ws.append([''])
-		ws.append([''])
 
 	# adjust the worksheet
 	_adjust_column(ws, col_height)
-
-
-"""
-function: adjust column width and font family for sheet
-parameters:
-ws: excel worksheet
-col_height: height of the column
-"""
-def _adjust_column(ws, col_height):
-	col_widths = {}
-	for i, col in enumerate(ws.columns):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		col_widths[col_name] = 0
-		for cell in col:
-			cell.alignment = Alignment(horizontal='left', wrap_text=True)
-			if cell:
-				try:
-					cell_length = len(str(cell.value))
-				except:
-					cell_length = len(cell.value)
-				if cell_length > col_widths[col_name]:
-					col_widths[col_name] = cell_length
-
-	for key in col_widths.keys():
-		col_widths[key] *= 1.5
-
-	for i, col in enumerate(range(ws.max_column)):
-		col_name = xlsxwriter.utility.xl_col_to_name(i)
-		ws.column_dimensions[col_name].width = col_widths[col_name]
-
-	for i in range(ws.max_row):
-		ws.row_dimensions[i].height = col_height
-
-	for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-		for cell in col:
-			cell.font = Font(name='Calibri', size=11)
 
 
 """
@@ -548,10 +323,13 @@ dtype_colname: string
 	name of the column for data type
 output_root: string, default=''
 	the root directory for the output file
+keep_images: boolean, default=False
+	whether to keep all generated images
 n_jobs: int, default=1
 	the number of jobs to run in parallel
 """
-def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='column', dtype_colname='type', output_root='', n_jobs=1):
+def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='column', 
+	dtype_colname='type', output_root='', keep_images=False, n_jobs=1):
 
 	# check table_schema
 	if type(table_schema) != pd.core.frame.DataFrame:
@@ -636,7 +414,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		key_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in key_features)
 		ws = wb.create_sheet(title='key')
 		# write the final result to work sheet
-		_insert_string_results(key_results, ws, 18)
+		_insert_string_results(key_results, ws, 25)
 
 
 	# for numeric features
@@ -647,7 +425,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_check_numeric)(col, table[[col]], img_dir) for col in numeric_features)
 		ws = wb.create_sheet(title='numeric')
 		# write the final result to work sheet
-		_insert_numeric_results(numeric_results, ws, 30, img_dir)
+		_insert_numeric_results(numeric_results, ws, 35, img_dir)
 
 
 	# for string features
@@ -657,7 +435,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		string_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in string_features)
 		ws = wb.create_sheet(title='string')
 		# write the final result to work sheet
-		_insert_string_results(string_results, ws, 18)
+		_insert_string_results(string_results, ws, 25)
 
 
 	# for date features
@@ -674,25 +452,19 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 
 		ws = wb.create_sheet(title='date')
 		# write the final result to work sheet
-		_insert_numeric_results(date_results, ws, 25, img_dir, date_flag=True)
+		_insert_numeric_results(date_results, ws, 35, img_dir, date_flag=True)
+
 
 	# write schema
 	ws = wb['Sheet']
 	ws.title = 'schema'
-	for r_idx, r in enumerate(dataframe_to_rows(table_schema[[feature_colname, dtype_colname]], index=False, header=True)):
-		ws.append(r)
-		for col in ws.iter_cols(max_col=ws.max_column, min_row=ws.max_row, max_row=ws.max_row):
-			for cell in col:
-				if r_idx == 0:
-					cell.font = Font(name='Calibri', size=11, bold=True)
-				else:
-					cell.font = Font(name='Calibri', size=11)
-
-	_adjust_column(ws, 18)
+	_ = _insert_df(table_schema[[feature_colname, dtype_colname]], ws, header=True)
+	_adjust_column(ws, 25)
 
 	wb.save(filename=os.path.join(output_root, 'data_summary_%s.xlsx' %(fname)))
 	# remove all temp images
-	shutil.rmtree(img_dir)
+	if not keep_images:
+		shutil.rmtree(img_dir)
 
 
 """
@@ -703,8 +475,6 @@ _table: pandas DataFrame
 	the data table
 fname: string
 	the output file name
-sample: boolean, default=False
-	whether to do sampling on the original data
 feature_colname: string
 	name of the column for feature
 dtype_colname: string
@@ -712,7 +482,7 @@ dtype_colname: string
 output_root: string, default=''
 	the root directory for the output file
 """
-def data_summary_notebook(table_schema, _table, fname, sample=False, feature_colname='column', dtype_colname='type', output_root=''):
+def data_summary_notebook(table_schema, _table, fname, feature_colname='column', dtype_colname='type', output_root=''):
 	# check table_schema
 	if type(table_schema) != pd.core.frame.DataFrame:
 		raise ValueError('table_schema: only accept pandas DataFrame')
@@ -723,10 +493,6 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 	# check _table
 	if type(_table) != pd.core.frame.DataFrame:
 		raise ValueError('_table: only accept pandas DataFrame')
-
-	# check sample
-	if type(sample) != bool:
-		raise ValueError('sample: only accept boolean values')
 
 	# check fname
 	if type(fname) != str:
@@ -781,9 +547,6 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 		outbook.write('#the data table (pandas DataFrame)\n')
 		outbook.write('table = \n')
 		outbook.write('print("table size: " + str(table.shape))\n\n')
-		if sample:
-			outbook.write('#the sample size (can be integer or float <= 1.0)\n')
-			outbook.write('sample_size =\n\n')
 		outbook.write('#global values\n')
 		outbook.write('VER_LINE = "#4BACC6"\n')
 		outbook.write('TEXT_LIGHT = "#DAEEF3"\n')
@@ -791,22 +554,6 @@ def data_summary_notebook(table_schema, _table, fname, sample=False, feature_col
 		outbook.write('#get date of today\n')
 		outbook.write('snapshot_date_now = str(datetime.datetime.now().date())\n')
 		outbook.write('print("date of today: " + snapshot_date_now)\n')
-
-		# check and calculate sample size if sample=True
-		if sample:
-			outbook.write('\n"""\n')
-			outbook.write('## calculate the sample size\n\n')
-			outbook.write('"""\n\n')
-			outbook.write('if sample_size <= 1.0:\n')
-			outbook.write('    sample_size = int(table.shape[0] * sample_size)\n')
-			outbook.write('    print(sample_size)\n')
-			outbook.write('else:\n')
-			outbook.write('    if sample_size > table.shape[0]:\n')
-			outbook.write('        raise ValueError("sample_size: should be smaller or equal to table size")\n')
-			outbook.write('\n"""\n')
-			outbook.write('## do sampling\n\n')
-			outbook.write('"""\n\n')
-			outbook.write('table = table.sample(sample_size).reset_index(drop=True)\n')
 
 		# only compare check columns in both table_schema and table
 		schema_col_set = set(table_schema[feature_colname].values)
