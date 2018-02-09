@@ -85,6 +85,12 @@ For an input data table (pandas dataframe):
 
    ***You can also turn the whole data compare process into a jupyter notebook by function data_compare_notebook()***  
   - example output for data compare: [data compare report](https://github.com/SauceCat/pydqc/blob/master/test/output/data_compare_properties_2016.xlsx)  
+  Inside the excel report, there is a worksheet called 'summary'. This worksheet summarizes the basic information regarding the comparing result, including a 'corr' field that indicates correlation of the same column between different tables.  
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_compare_summary.png" width="80%">  
+      - **key**: 'corr' = rate of overlap
+      - **str**: 'corr' = Spearman rank-order correlation coefficient between not-nan value counts
+      - **numeric** and **date**: 'corr' = Spearman rank-order correlation coefficient between not-nan value counts (when the number of unique values is small) or between not-nan value distribution (use 100-bin histogram)  
+  
   - example output for data compare notebook: [data compare notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_compare_notebook_properties_2016.ipynb)  
   
 ### Step 2 (option 3): data consist 
@@ -103,6 +109,11 @@ For an input data table (pandas dataframe):
 
    ***You can also turn the whole data compare process into a jupyter notebook by function data_consist_notebook()***  
   - example output for data consist: [data consist report](https://github.com/SauceCat/pydqc/blob/master/test/output/data_consist_properties_2016.xlsx)  
+  Inside the excel report, there is a worksheet called 'summary'. This worksheet summarizes the basic information regarding the consistency checking result, including a 'corr' field that indicates correlation of the same column between different tables.  
+      <img src="https://github.com/SauceCat/pydqc/blob/master/images/data_consist_summary.png" width="80%">  
+      - **key**: 'corr' = rate of overlap
+      - **str**: 'corr' = rate of consistency
+      - **numeric** and **date**: 'corr' = Spearman rank-order correlation coefficient between not-nan value pairs
   - example output for data consist notebook: [data consist notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_consist_notebook_properties_2016.ipynb)  
 
 
