@@ -177,7 +177,8 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		if len(data[col].dropna()) <= sample_size:
 			data_dropna_sample_values[col] = data[col].dropna().values
 		else:
-			data_dropna_sample_values[col] = data[col].dropna().sample(sample_size).values
+			data = data.sample(sample_size).reset_index(drop=True)
+			data_dropna_sample_values[col] = data[col].dropna().values
 	
 	# use data_dropna_sample_values to infer data type for each column
 	type_infos = Parallel(n_jobs=n_jobs)(delayed(_infer_dtype)(data_dropna_sample_values[col], col, type_threshold) 
