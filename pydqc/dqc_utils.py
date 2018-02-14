@@ -60,7 +60,7 @@ def _draw_texts(draw_value_4, mark, text_values, y_low, y_up, date_flag=False):
 		plt.text(draw_value_4[0], y_low + (y_up - y_low) * 0.1 * mark, 'max:' + str(text_values[1]), 
 			ha="center", va="center", bbox=dict(boxstyle="square", facecolor=color_light, edgecolor='none'))
 		plt.text(draw_value_4[3], y_low + (y_up - y_low) * (0.6 + 0.1 * mark), 'min:' + str(text_values[0]), 
-			ha="center", va="center", bbox=dict(boxstyle="square", facecolor=TABLE1_LIGHT, edgecolor='none'))
+			ha="center", va="center", bbox=dict(boxstyle="square", facecolor=color_light, edgecolor='none'))
 	else:
 		plt.axvline(x=draw_value_4[1], color=color_dark, linestyle='--', linewidth=1.5)
 		plt.axvline(x=draw_value_4[2], color=color_dark, linestyle='--', linewidth=1.5)

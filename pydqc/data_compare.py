@@ -409,8 +409,8 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 		plt.ylim((y_low, y_up))
 
 		if date_flag:
-			_draw_texts(df1_draw_value_4, mark=1, text_values=[date_mins[0], date_maxs[0]], y_low=y_low, y_up=y_up, date_flag=True)
-			_draw_texts(df2_draw_value_4, mark=2, text_values=[date_mins[1], date_maxs[1]], y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(df1_draw_value_4, mark=1, text_values=[date_min1, date_max1], y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(df2_draw_value_4, mark=2, text_values=[date_min2, date_max2], y_low=y_low, y_up=y_up, date_flag=True)
 		else:
 			_draw_texts(df1_draw_value_4, mark=1, text_values=[value_mins[0], value_means[0], 
 				value_medians[0], value_maxs[0]], y_low=y_low, y_up=y_up)
@@ -511,7 +511,8 @@ def _compare_date(col, _df1, _df2, img_dir):
 		result_df.loc[result_df['feature']=='column', 'value'] = col.replace('_numeric', '')
 		result_df.loc[0, 'graph'] = 'Distribution (months)'
 
-		return {'column': col.replace('_numeric', ''), 'result_df': result_df}
+		return {'column': col.replace('_numeric', ''), 'result_df': result_df, 
+				'corr': {'column': col.replace('_numeric', ''), 'corr': numeric_output['corr']['corr']}}
 	else:
 		return {'column': col.replace('_numeric', ''), 'error_msg': numeric_output['error_msg']}
 

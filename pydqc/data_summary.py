@@ -171,7 +171,10 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 			draw_values, draw_value_4 = _get_scale_draw_values(draw_values, draw_value_4)
 
 		# draw and save distribution graph
-		plt.figure(figsize=(9, 4.5))
+		if date_flag:
+			plt.figure(figsize=(9, 5.5))
+		else:
+			plt.figure(figsize=(9, 4.5))
 		if scale_flg:
 			plt.title('%s (log10 scale)' %(col))
 		else:
