@@ -21,7 +21,7 @@ import datetime
 
 from dqc_utils import (
 	_style_range, _get_scale_draw_values, _draw_texts, 
-	_adjust_column, _insert_df, _insert_numeric_results
+	_adjust_ws, _insert_df, _insert_numeric_results
 )
 
 import warnings
@@ -162,13 +162,15 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
 		plt.ylim((y_low, y_up))
 
 		if date_flag:
-			_draw_texts(df1_draw_value_4, mark=1, text_values=[date_mins[0], date_maxs[0]], y_low=y_low, y_up=y_up, date_flag=True)
-			_draw_texts(df2_draw_value_4, mark=2, text_values=[date_mins[1], date_maxs[1]], y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(text_values=[date_mins[0], date_maxs[0]], draw_value_4=df1_draw_value_4, mark=1,
+						y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(text_values=[date_mins[1], date_maxs[1]], draw_value_4=df2_draw_value_4, mark=2,
+						y_low=y_low, y_up=y_up, date_flag=True)
 		else:
-			_draw_texts(df1_draw_value_4, mark=1, text_values=[value_mins[0], value_means[0], 
-				value_medians[0], value_maxs[0]], y_low=y_low, y_up=y_up)
-			_draw_texts(df2_draw_value_4, mark=2, text_values=[value_mins[1], value_means[1], 
-				value_medians[1], value_maxs[1]], y_low=y_low, y_up=y_up)
+			_draw_texts(text_values=[value_mins[0], value_means[0], value_medians[0], value_maxs[0]],
+						draw_value_4=df1_draw_value_4, mark=1, y_low=y_low, y_up=y_up)
+			_draw_texts(text_values=[value_mins[1], value_means[1], value_medians[1], value_maxs[1]],
+						draw_value_4=df2_draw_value_4, mark=2, y_low=y_low, y_up=y_up)
 
 	plt.show()
 
@@ -409,13 +411,15 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 		plt.ylim((y_low, y_up))
 
 		if date_flag:
-			_draw_texts(df1_draw_value_4, mark=1, text_values=[date_min1, date_max1], y_low=y_low, y_up=y_up, date_flag=True)
-			_draw_texts(df2_draw_value_4, mark=2, text_values=[date_min2, date_max2], y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(text_values=[date_min1, date_max1], draw_value_4=df1_draw_value_4, mark=1,
+						y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(text_values=[date_min2, date_max2], draw_value_4=df2_draw_value_4, mark=2,
+						y_low=y_low, y_up=y_up, date_flag=True)
 		else:
-			_draw_texts(df1_draw_value_4, mark=1, text_values=[value_mins[0], value_means[0], 
-				value_medians[0], value_maxs[0]], y_low=y_low, y_up=y_up)
-			_draw_texts(df2_draw_value_4, mark=2, text_values=[value_mins[1], value_means[1], 
-				value_medians[1], value_maxs[1]], y_low=y_low, y_up=y_up)
+			_draw_texts(text_values=[value_mins[0], value_means[0], value_medians[0], value_maxs[0]],
+						draw_value_4=df1_draw_value_4, mark=1, y_low=y_low, y_up=y_up)
+			_draw_texts(text_values=[value_mins[1], value_means[1], value_medians[1], value_maxs[1]],
+						draw_value_4=df2_draw_value_4, mark=2, y_low=y_low, y_up=y_up)
 			
 	# save the graphs
 	plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
@@ -517,12 +521,12 @@ def _compare_date(col, _df1, _df2, img_dir):
 		return {'column': col.replace('_numeric', ''), 'error_msg': numeric_output['error_msg']}
 
 
-def _insert_compare_string_results(string_results, ws, col_height):
+def _insert_compare_string_results(string_results, ws, row_height):
 	# construct thick border
 	thin = Side(border_style="thin", color="000000")
 	border = Border(top=thin, left=thin, right=thin, bottom=thin)
 
-	col_heights = {}
+	row_heights = {}
 
 	# loop and output result
 	for result in string_results:
@@ -542,7 +546,7 @@ def _insert_compare_string_results(string_results, ws, col_height):
 			value_counts_df = value_counts_df.rename(columns={'value': 'top 10 values', 'count_x': 'count_1', 'count_y': 'count_2'})
 			databar_head = _insert_df(value_counts_df, ws, header=True, head_style='60 % - Accent5')
 			for row_idx in range(databar_head, databar_head+value_counts_df.shape[0]+1):
-				col_heights[row_idx] = 25
+				row_heights[row_idx] = 25
 
 			# add conditional formatting: data bar
 			first = FormatObject(type='min')
@@ -564,7 +568,7 @@ def _insert_compare_string_results(string_results, ws, col_height):
 		# add gap
 		ws.append([''])
 
-	_adjust_column(ws, col_height, col_heights=col_heights, adjust_type='str')
+	_adjust_ws(ws, row_height=row_height, row_heights=row_heights, adjust_type='str')
 
 
 """
@@ -801,13 +805,14 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 
 	for r_idx in error_rows:
 		ws['C%d' %(r_idx + 2)].style = 'Bad'
-	_adjust_column(ws, 25)
+
+	_adjust_ws(ws=ws, row_height=25)
 
 	# if there are some errors
 	if len(schema_error) > 0:
 		ws = wb.create_sheet(title='error')
 		_ = _insert_df(schema_error, ws, header=True)
-		_adjust_column(ws, 25)
+		_adjust_ws(ws=ws, row_height=25)
 
 	wb.save(filename=os.path.join(output_root, 'data_compare_%s.xlsx' %(fname)))
 	if not keep_images:

@@ -14,7 +14,7 @@ import xlsxwriter
 import warnings
 warnings.filterwarnings('ignore')
 
-from dqc_utils import _adjust_column
+from dqc_utils import _adjust_ws
 
 
 def _infer_dtype(sample_data, col, type_threshold):
@@ -283,7 +283,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 								  FormulaRule(formula=['%s2=1' %(column_mapping['sample_num_uni'])], stopIfTrue=True, fill=red_fill, font=red_font))
 
 	# adjust the column format for the worksheet
-	_adjust_column(ws, 20)
+	_adjust_ws(ws=ws, row_height=20)
 
 	wb.save(filename = os.path.join(output_root, 'data_schema_%s.xlsx' %(fname)))
 

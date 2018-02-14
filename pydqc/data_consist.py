@@ -22,7 +22,7 @@ from matplotlib_venn import venn2
 
 from dqc_utils import (
 	_style_range, _get_scale_draw_values, _draw_texts, 
-	_adjust_column, _insert_df, _insert_numeric_results
+	_adjust_ws, _insert_df, _insert_numeric_results
 )
 from data_compare import _compare_key
 from data_summary import _insert_string_results
@@ -135,7 +135,7 @@ def numeric_consist_pretty(_df1, _df2, _key1, _key2, col, figsize=None, date_fla
 	ax2 = plt.subplot(122)
 	sns.distplot(draw_values, color=TABLE2_DARK)
 	y_low, y_up = ax2.get_ylim()
-	_draw_texts(draw_value_4, mark=1, text_values=origin_value_4, y_low=y_low, y_up=y_up)
+	_draw_texts(text_values=origin_value_4, draw_value_4=draw_value_4, mark=1, y_low=y_low, y_up=y_up)
 
 	if date_flag:
 		plt.title('Distribution of differences (in months)')
@@ -200,7 +200,7 @@ def _consist_numeric(col, _df1, _df2, _key1, _key2, img_dir, date_flag=False):
 	ax2 = plt.subplot(122)
 	sns.distplot(draw_values, color=TABLE2_DARK)
 	y_low, y_up = ax2.get_ylim()
-	_draw_texts(draw_value_4, mark=1, text_values=origin_value_4, y_low=y_low, y_up=y_up)
+	_draw_texts(text_values=origin_value_4, draw_value_4=draw_value_4, mark=1, y_low=y_low, y_up=y_up)
 
 	if date_flag:
 		plt.title('Distribution of differences (in months)')
@@ -497,13 +497,13 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 
 	for r_idx in error_rows:
 		ws['C%d' %(r_idx + 2)].style = 'Bad'
-	_adjust_column(ws, 25)
+	_adjust_ws(ws=ws, row_height=25)
 
 	# if there are some errors
 	if len(schema_error) > 0:
 		ws = wb.create_sheet(title='error')
 		_ = _insert_df(schema_error, ws, header=True)
-		_adjust_column(ws, 25)
+		_adjust_ws(ws=ws, row_height=25)
 
 	wb.save(filename=os.path.join(output_root, 'data_consist_%s.xlsx' %(fname)))
 	if not keep_images:

@@ -16,7 +16,7 @@ sns.set_style('white')
 
 from dqc_utils import (
 	_style_range, _get_scale_draw_values, _draw_texts, 
-	_adjust_column, _insert_df, _insert_numeric_results
+	_adjust_ws, _insert_df, _insert_numeric_results
 )
 
 import warnings
@@ -124,9 +124,11 @@ def distribution_summary_pretty(_value_df, col, figsize=None, date_flag=False):
 		y_low, y_up = ax.get_ylim()
 
 		if date_flag:
-			_draw_texts(draw_value_4, mark=1, text_values=[date_min, date_max], y_low=y_low, y_up=y_up, date_flag=True)
+			_draw_texts(text_values=[date_min, date_max], draw_value_4=draw_value_4, mark=1, y_low=y_low, y_up=y_up,
+						date_flag=True)
 		else:
-			_draw_texts(draw_value_4, mark=1, text_values=[value_min, value_mean, value_median, value_max], y_low=y_low, y_up=y_up)
+			_draw_texts(text_values=[value_min, value_mean, value_median, value_max], draw_value_4=draw_value_4, mark=1,
+						y_low=y_low, y_up=y_up)
 	plt.show()
 
 
@@ -191,9 +193,11 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 			y_low, y_up = ax.get_ylim()
 
 			if date_flag:
-				_draw_texts(draw_value_4, mark=1, text_values=[date_min, date_max], y_low=y_low, y_up=y_up, date_flag=True)
+				_draw_texts(text_values=[date_min, date_max], draw_value_4=draw_value_4, mark=1, y_low=y_low, y_up=y_up,
+							date_flag=True)
 			else:
-				_draw_texts(draw_value_4, mark=1, text_values=[value_min, value_mean, value_median, value_max], y_low=y_low, y_up=y_up)
+				_draw_texts(text_values=[value_min, value_mean, value_median, value_max], draw_value_4=draw_value_4,
+							mark=1, y_low=y_low, y_up=y_up)
 
 		# save the graphs
 		plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
@@ -264,7 +268,7 @@ def _check_date(col, value_df, img_dir):
 		return {'column': col.replace('_numeric', ''), 'error_msg': numeric_output['error_msg']}
 
 
-def _insert_string_results(string_results, ws, col_height):
+def _insert_string_results(string_results, ws, row_height):
 	# construct thin border
 	thin = Side(border_style="thin", color="000000")
 	border = Border(top=thin, left=thin, right=thin, bottom=thin)
@@ -305,7 +309,7 @@ def _insert_string_results(string_results, ws, col_height):
 		ws.append([''])
 
 	# adjust the worksheet
-	_adjust_column(ws, col_height)
+	_adjust_ws(ws=ws, row_height=row_height)
 
 
 """
@@ -462,7 +466,8 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	ws = wb['Sheet']
 	ws.title = 'schema'
 	_ = _insert_df(table_schema[[feature_colname, dtype_colname]], ws, header=True)
-	_adjust_column(ws, 25)
+
+	_adjust_ws(ws=ws, row_height=25)
 
 	wb.save(filename=os.path.join(output_root, 'data_summary_%s.xlsx' %(fname)))
 	# remove all temp images
