@@ -1,0 +1,59 @@
+df1 = table1[[col]].copy()
+df2 = table2[[col]].copy()
+
+"""
+#### basic comparison
+
+"""
+
+# sample values
+
+"""
+"""
+
+df1.sample(5)
+
+"""
+"""
+
+df2.sample(5)
+
+"""
+"""
+
+# nan_rate
+nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
+nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
+
+print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
+
+"""
+"""
+
+# num_uni
+num_uni1 = df1[col].dropna().nunique()
+num_uni2 = df2[col].dropna().nunique()
+
+print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
+print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
+
+
+"""
+#### compare intersection
+
+"""
+
+set_df1_col = set(df1[col].dropna().values) if nan_rate1 < 1 else set()
+set_df2_col = set(df2[col].dropna().values) if nan_rate2 < 1 else set()
+col_overlap = len(set_df1_col.intersection(set_df2_col))
+col_only_df1, col_only_df2 = len(set_df1_col - set_df2_col), len(set_df2_col - set_df1_col)
+
+print("col_overlap: " + str(col_overlap) + "; col_only_df1: " + str(col_only_df1) + "; col_only_df2: " + str(col_only_df2))
+
+"""
+#### draw venn graph
+
+"""
+
+plt.figure(figsize=(10, 5))
+venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"],set_colors=("#4BACC6", "#F79646"), alpha=0.8)

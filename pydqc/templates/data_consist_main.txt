@@ -1,0 +1,45 @@
+
+"""
+## import useful packages
+
+"""
+
+import pandas as pd
+import numpy as np
+
+import datetime
+
+from scipy.stats import spearmanr
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style("white")
+from matplotlib_venn import venn2
+
+%matplotlib inline
+
+from pydqc.data_consist import numeric_consist_pretty
+
+"""
+## assign values
+
+"""
+
+#the data table (pandas DataFrame)
+table1 =
+table2 =
+print("table1 size: " + str(table1.shape))
+print("table2 size: " + str(table2.shape))
+
+key1 =
+key2 =
+
+#global values
+TABLE1_DARK = "#4BACC6"
+TABLE1_LIGHT = "#DAEEF3"
+TABLE2_DARK = "#F79646"
+TABLE2_LIGHT = "#FDE9D9"
+
+#get date of today
+snapshot_date_now = str(datetime.datetime.now().date())
+print("date of today: " + snapshot_date_now)

@@ -475,7 +475,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		out_schema['check'] = out_schema[feature_colname].apply(lambda x : 'not exits' if x in null_features else x)
 		error_indices += list(out_schema[out_schema[feature_colname].isin(null_features)].index.values)
 
-	_ = _insert_df(table_schema[[feature_colname, dtype_colname]], ws, header=True)
+	_ = _insert_df(out_schema, ws, header=True)
 	if len(error_indices) > 0:
 		for idx in error_indices:
 			ws['C%d' %(idx+2)].style = 'Bad'
@@ -519,17 +519,15 @@ def data_summary_notebook(table_schema, _table, fname, feature_colname='column',
 	if os.path.isfile(output_path.replace('.py', '.ipynb')):
 		os.remove(output_path.replace('.py', '.ipynb'))
 
+	dir_path = os.path.dirname(os.path.realpath(__file__))
+	main_line = open(dir_path + '/templates/data_summary_main.txt').read()
+	key_str_line = open(dir_path + '/templates/data_summary_key_str.txt').read()
+	numeric_line = open(dir_path + '/templates/data_summary_numeric.txt').read()
+	date_line = open(dir_path + '/templates/data_summary_date.txt').read()
+
 	with open(output_path, "a") as outbook:
 		# main
-		outbook.write('\n"""\n## import useful packages\n\n"""\n\nimport pandas as pd\nimport numpy as np\n\n'
-					  'import datetime\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n'
-					  'sns.set_style("white")\n\n%matplotlib inline\n\n'
-					  'from pydqc.data_summary import distribution_summary_pretty\n\n\n"""\n'
-					  '## assign values\n\n"""\n\n#the data table (pandas DataFrame)\ntable =\n'
-					  'print("table size: " + str(table.shape))\n\n#global values\nVER_LINE = "#4BACC6"\n'
-					  'TEXT_LIGHT = "#DAEEF3"\nDIS_LINE = "#F79646"\n\n#get date of today\n'
-					  'snapshot_date_now = str(datetime.datetime.now().date())\n'
-					  'print("date of today: " + snapshot_date_now)')
+		outbook.write(main_line)
 
 		# only compare check columns in both table_schema and table
 		schema_col_set = set(table_schema[feature_colname].values)
@@ -554,35 +552,15 @@ def data_summary_notebook(table_schema, _table, fname, feature_colname='column',
 			# get the data type of the column
 			col_type = table_schema[table_schema[feature_colname]==col][dtype_colname].values[0]
 			outbook.write('\n"""\n## %s (type: %s)\n\n"""\n\n' %(col, col_type))
-			outbook.write('col="%s"\n' %(col))
+			outbook.write('col = "%s"\n' %(col))
 
 			# for key and str, check simple value counts
 			if (col_type == 'key') or (col_type == 'str'):
-				outbook.write('\nvalue_df = table[[col]].copy()\n'
-							  'nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]\n'
-							  'num_uni = value_df[col].dropna().nunique()\n\nprint("nan_rate: " + str(nan_rate))\n'
-							  'print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))\n\n'
-							  '"""\n#### check value counts\n\n"""\n\nvalue_df[col].value_counts().head(10)')
+				outbook.write(key_str_line)
+			elif col_type == 'date':
+				outbook.write(date_line)
 			else:
-				numeric_line = '\nvalue_df = table[[col]].copy()\nnan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]\n' \
-							   'num_uni = value_df[col].dropna().nunique()\n\nprint("nan_rate: " + str(nan_rate))\n' \
-							   'print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))\n\n' \
-							   '"""\n#### check basic stats\n\n"""\n\n%svalue_min=value_df[col].min()\nvalue_mean=value_df[col].mean()\n' \
-							   'value_median=value_df[col].median()\nvalue_max=value_df[col].max()\n\n%s' \
-							   'print("min: " + str(value_min))\nprint("mean: " + str(value_mean))\n' \
-							   'print("median: " + str(value_median))\nprint("max: " + str(value_max))\n\n"""\n' \
-							   '#### check distribution\n\n"""\n\nvalue_dropna = value_df[col + "_numeric"].dropna().values\n' \
-							   'plt.figure(figsize=(10, 5))\nplt.title(col)\nsns.distplot(value_dropna, color="#F79646", ' \
-							   'norm_hist=True, hist=False)\n\n"""\n"""\n\n#you can also use the build-in draw function\n' \
-							   'distribution_summary_pretty(value_df, col, figsize=None, date_flag=%s)'
-
-				if col_type == 'date':
-					outbook.write(numeric_line %('# for date, first turn it to numeric\nvalue_df[col] = pd.to_datetime(value_df[col], errors="coerce")\n'
-								  'value_df[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(value_df[col], '
-								  'errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\ndate_min=value_df[col].min()\n'
-								  'date_max=value_df[col].max()\n\n', 'print("min date: " + str(date_min))\nprint("max date: " + str(date_max))\n\n', 'True'))
-				else:
-					outbook.write(numeric_line %('', '', 'False'))
+				outbook.write(numeric_line)
 
 		outbook.close()
 

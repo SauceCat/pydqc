@@ -1,0 +1,18 @@
+
+df1 = table1[[key1, col]].copy()
+df2 = table2[[key2, col]].copy()
+
+"""
+#### check pairwise consistency
+
+"""
+
+# merge 2 tables
+df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
+
+# calculate consistency
+df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
+df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
+
+corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
+print("consistency rate: " + str(corr))

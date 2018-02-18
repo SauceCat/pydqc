@@ -1,0 +1,38 @@
+
+value_df = table[[col]].copy()
+nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
+num_uni = value_df[col].dropna().nunique()
+
+print("nan_rate: " + str(nan_rate))
+print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
+
+"""
+#### check basic stats
+
+"""
+
+value_min=value_df[col].min()
+value_mean=value_df[col].mean()
+value_median=value_df[col].median()
+value_max=value_df[col].max()
+
+print("min: " + str(value_min))
+print("mean: " + str(value_mean))
+print("median: " + str(value_median))
+print("max: " + str(value_max))
+
+"""
+#### check distribution
+
+"""
+
+value_dropna = value_df[col].dropna().values
+plt.figure(figsize=(10, 5))
+plt.title(col)
+sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
+
+"""
+"""
+
+#you can also use the build-in draw function
+distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)

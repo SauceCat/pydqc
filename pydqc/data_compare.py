@@ -5,12 +5,10 @@ import shutil
 from scipy.stats import spearmanr
 
 import openpyxl
-from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+from openpyxl.styles import Border, Side
 from openpyxl.formatting.rule import DataBar, FormatObject, Rule
 
 from sklearn.externals.joblib import Parallel, delayed
-import xlsxwriter
 
 import matplotlib.pyplot as plt
 import seaborn as sns 
@@ -36,65 +34,37 @@ TABLE2_DARK = "#F79646"
 TABLE2_LIGHT = "#FDE9D9"
 
 
-"""
-function: draw pretty distribution graph for comparing a column between two tables
-parameters:
-_df1: pandas DataFrame
-	slice of table1 containing enough information to check
-_df2: pandas DataFrame
-	slice of table2 containing enough information to check
-col: string
-	name of column to check
-figsize: tuple, default=None
-	figure size
-date_flag: bool, default=False
-	whether it is checking date features
-"""
 def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
+	"""
+	Draw pretty distribution graph for data compare
 
-	# check _df1
-	if type(_df1) != pd.core.frame.DataFrame:
-		raise ValueError('_df1: only accept pandas DataFrame')
-
-	# check _df2
-	if type(_df2) != pd.core.frame.DataFrame:
-		raise ValueError('_df2: only accept pandas DataFrame')
-
-	# check col
-	if type(col) != str:
-		raise ValueError('col: only accept string')
-	if col not in _df1.columns.values:
-		raise ValueError('col: column not in df1')
-	if col not in _df2.columns.values:
-		raise ValueError('col: column not in df2')
-
-	# check figsize
-	if figsize is not None:
-		if type(figsize) != tuple:
-			raise ValueError('figsize: should be a tuple')
-		if len(figsize) != 2:
-			raise ValueError('figsize: should contain 2 elements: (width, height)')
-
-	# check date_flag
-	if type(date_flag) != bool:
-		raise ValueError('date_flag: only accept boolean values')
+	Parameters
+	----------
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+	col: string
+		name of column to check
+	figsize: tuple, default=None
+		figure size
+	date_flag: bool, default=False
+		whether it is checking date features
+	"""
 
 	# color values for graph
 	TABLE1_DARK = "#4BACC6"
-	TABLE1_LIGHT = "#DAEEF3"
-
 	TABLE2_DARK = "#F79646"
-	TABLE2_LIGHT = "#FDE9D9"
 
 	df1, df2 = _df1.copy(), _df2.copy()
 
 	if date_flag:
 		numeric_col = '%s_numeric' %(col)
-		if not numeric_col in df1.columns.values:
+		if numeric_col not in df1.columns.values:
 			snapshot_date_now = str(datetime.datetime.now().date())
 			df1[numeric_col] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df1[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
-		if not numeric_col in df2.columns.values:
+		if numeric_col not in df2.columns.values:
 			snapshot_date_now = str(datetime.datetime.now().date())
 			df2[numeric_col] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df2[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
@@ -124,7 +94,7 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
 	df2_draw_values = df2_sample_dropna_values
 	df2_draw_value_4 = [value_mins[1], value_means[1], value_medians[1], value_maxs[1]]
 
-	if both_value_max >= 1000000:
+	if both_value_max >= pow(10, 6):
 		scale_flg = 1
 		df1_draw_values, df1_draw_value_4 = _get_scale_draw_values(df1_draw_values, df1_draw_value_4)
 		df2_draw_values, df2_draw_value_4 = _get_scale_draw_values(df2_draw_values, df2_draw_value_4)
@@ -176,61 +146,54 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
 
 
 def _simple_stats(col, _df1, _df2, stat_type):
+	"""
+	Check simple statistical information
+
+	Parameters
+	----------
+	col: string
+		name of column to check
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+	stat_type: type of the column
+
+	Returns
+	-------
+	output: dictionary contains the output result
+	"""
 
 	df1 = _df1.copy()
 	df2 = _df2.copy()
 
 	# default output 
-	output = {'sample_value': np.nan, 'nan_rate': np.nan, 'num_uni': np.nan, 'value_min': np.nan, 
-			'value_mean': np.nan, 'value_median': np.nan, 'value_max': np.nan, 'date_min': np.nan, 'date_max': np.nan}
+	output = {'sample_value': np.nan, 'nan_rate': np.nan, 'num_uni': np.nan,
+			  'value_min': np.nan, 'value_mean': np.nan, 'value_median': np.nan, 'value_max': np.nan,
+			  'date_min': np.nan, 'date_max': np.nan}
 	
 	# nan_rate
 	nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 	nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
-	output['nan_rate'] = '%s\n%s' %(str(round(nan_rate1, 3)), str(round(nan_rate2, 3)))
+	output['nan_rate'] = [nan_rate1, nan_rate2]
 
 	if nan_rate1 == 1 or nan_rate2 == 1:
 		return output
 
 	# sample value
-	try:
-		sample_value1 = df1[col].dropna().sample(1).values[0]
-	except:
-		sample_value1 = ''
-
-	try:
-		sample_value2 = df2[col].dropna().sample(1).values[0]
-	except:
-		sample_value2 = ''
-	output['sample_value'] = '%s\n%s' %(str(sample_value1), str(sample_value2))
+	output['sample_value'] = [df1[col].dropna().sample(1).values[0], df2[col].dropna().sample(1).values[0]]
 
 	# num_uni
-	num_uni1 = df1[col].dropna().nunique()
-	num_uni2 = df2[col].dropna().nunique()
-	output['num_uni'] = '%s/%s\n%s/%s' %(str(num_uni1), str(df1.dropna().shape[0]), str(num_uni2), str(df2.dropna().shape[0]))
+	output['num_uni'] = [df1[col].dropna().nunique(), df2[col].dropna().nunique()]
 
 	if (stat_type == 'key') or (stat_type == 'str'):
 		return output
 
-	# value_min
-	value_min1 = df1[col].min()
-	value_min2 = df2[col].min()
-	output['value_min'] = '%s\n%s' %(str(value_min1), str(value_min2))
-
-	# value_mean
-	value_mean1 = df1[col].mean()
-	value_mean2 = df2[col].mean()
-	output['value_mean'] = '%s\n%s' %(str(value_mean1), str(value_mean2))
-
-	# value_median
-	value_median1 = df1[col].median()
-	value_median2 = df2[col].median()
-	output['value_median'] = '%s\n%s' %(str(value_median1), str(value_median2))
-
-	# value_max
-	value_max1 = df1[col].max()
-	value_max2 = df2[col].max()
-	output['value_max'] = '%s\n%s' %(str(value_max1), str(value_max2))
+	# stats
+	output['value_min'] = [df1[col].min(), df2[col].min()]
+	output['value_mean'] = [df1[col].mean(), df2[col].mean()]
+	output['value_median'] = [df1[col].median(), df2[col].median()]
+	output['value_max'] = [df1[col].max(), df2[col].max()]
 
 	if stat_type == 'numeric':
 		return output
@@ -238,17 +201,34 @@ def _simple_stats(col, _df1, _df2, stat_type):
 	# date_min
 	date_min1 = pd.to_datetime(df1[col.replace('_numeric', '')], errors='coerce').min()
 	date_min2 = pd.to_datetime(df2[col.replace('_numeric', '')], errors='coerce').min()
-	output['date_min'] = '%s\n%s' %(str(date_min1), str(date_min2))
+	output['date_min'] = [date_min1, date_min2]
 
 	# date_max
 	date_max1 = pd.to_datetime(df1[col.replace('_numeric', '')], errors='coerce').max()
 	date_max2 = pd.to_datetime(df2[col.replace('_numeric', '')], errors='coerce').max()
-	output['date_max'] = '%s\n%s' %(str(date_max1), str(date_max2))
+	output['date_max'] = [date_max1, date_max2]
 
 	return output
 
 
 def _compare_key(key, _df1, _df2, img_dir):
+	"""
+	Compare two key type values
+
+	Parameters
+	----------
+	key: string
+		name of column to check
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+	img_dir: root directory for the generated images
+
+	Returns
+	-------
+	Dictionary contains the output result
+	"""
 
 	df1 = _df1.copy()
 	df2 = _df2.copy()
@@ -257,8 +237,7 @@ def _compare_key(key, _df1, _df2, img_dir):
 	stat_output = _simple_stats(key, df1, df2, 'key')
 
 	# basic check for key
-	nan_rates = [pd.to_numeric(v) for v in stat_output['nan_rate'].split('\n')]
-	nan_rate1, nan_rate2 = nan_rates[0], nan_rates[1]
+	nan_rate1, nan_rate2 = stat_output['nan_rate']
 
 	if (nan_rate1 == 1) or (nan_rate2 == 1): 
 		if (nan_rate1 == 1) and (nan_rate2 == 1):
@@ -267,7 +246,7 @@ def _compare_key(key, _df1, _df2, img_dir):
 			error_msg = 'all nan in table1'
 		else:
 			error_msg = 'all nan in table2'
-		return {'column': col, 'error_msg': error_msg}
+		return {'column': key, 'error_msg': error_msg}
 
 	set_df1_key = set(df1[key].dropna().values) if nan_rate1 < 1 else set()
 	set_df2_key = set(df2[key].dropna().values) if nan_rate2 < 1 else set()
@@ -278,9 +257,10 @@ def _compare_key(key, _df1, _df2, img_dir):
 	# generate the output
 	output = [
 		{'feature': 'column', 'value': key, 'graph': 'venn graph'},
-		{'feature': 'sample_value', 'value': stat_output['sample_value']},
-		{'feature': 'nan_rate', 'value': stat_output['nan_rate']},
-		{'feature': 'num_uni', 'value': stat_output['num_uni']},
+		{'feature': 'sample_value', 'value': '\n'.join([str(v) for v in stat_output['sample_value']])},
+		{'feature': 'nan_rate', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['nan_rate']])},
+		{'feature': 'num_uni', 'value': '%s/%s\n%s/%s' % (str(stat_output['num_uni'][0]), str(df1.dropna().shape[0]),
+														  str(stat_output['num_uni'][1]), str(df2.dropna().shape[0]))},
 		{'feature': 'overlap', 'value': key_overlap},
 		{'feature': 'only in table1', 'value': key_only_df1},
 		{'feature': 'only in table2', 'value': key_only_df2},
@@ -298,6 +278,25 @@ def _compare_key(key, _df1, _df2, img_dir):
 
 
 def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
+	"""
+	Compare two numeric type values
+
+	Parameters
+	----------
+	col: string
+		name of column to check
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+	img_dir: root directory for the generated images
+	date_flag: boolean
+		Whether the column is date type
+
+	Returns
+	-------
+	Dictionary contains the output result
+	"""
 
 	# sampling 
 	df1_sample = _df1.copy()
@@ -305,8 +304,7 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 
 	stat_output = _simple_stats(col, df1_sample, df2_sample, 'numeric')
 
-	nan_rates = [pd.to_numeric(v) for v in stat_output['nan_rate'].split('\n')]
-	nan_rate1, nan_rate2 = nan_rates[0], nan_rates[1]
+	nan_rate1, nan_rate2 = stat_output['nan_rate']
 	if (nan_rate1 == 1) or (nan_rate2 == 1): 
 		if (nan_rate1 == 1) and (nan_rate2 == 1):
 			error_msg = 'all nan in both table'
@@ -319,26 +317,21 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 	# generate the output
 	output = [
 		{'feature': 'column', 'value': col, 'graph': 'Distribution'},
-		{'feature': 'sample_value', 'value': stat_output['sample_value']},
-		{'feature': 'nan_rate', 'value': stat_output['nan_rate']},
-		{'feature': 'num_uni', 'value': stat_output['num_uni']},
-		{'feature': 'value_min', 'value': stat_output['value_min']},
-		{'feature': 'value_mean', 'value': stat_output['value_mean']},
-		{'feature': 'value_median', 'value': stat_output['value_median']},
-		{'feature': 'value_max', 'value': stat_output['value_max']}
+		{'feature': 'sample_value', 'value': '\n'.join([str(v) for v in stat_output['sample_value']])},
+		{'feature': 'nan_rate', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['nan_rate']])},
+		{'feature': 'num_uni', 'value': '%s/%s\n%s/%s' % (str(stat_output['num_uni'][0]), str(df1_sample.dropna().shape[0]),
+														  str(stat_output['num_uni'][1]), str(df2_sample.dropna().shape[0]))},
+		{'feature': 'value_min', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['value_min']])},
+		{'feature': 'value_mean', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['value_mean']])},
+		{'feature': 'value_median', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['value_median']])},
+		{'feature': 'value_max', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['value_max']])}
 	]
 
-	both_value_max = np.max([abs(pd.to_numeric(v)) for v in stat_output['value_max'].split('\n')] + \
-		[abs(pd.to_numeric(v)) for v in stat_output['value_min'].split('\n')])
+	both_value_max = np.max([abs(v) for v in stat_output['value_max']] + [abs(v) for v in stat_output['value_min']])
 
 	# get clean values
 	df1_sample_dropna_values = df1_sample[col].dropna().values
 	df2_sample_dropna_values = df2_sample[col].dropna().values
-
-	value_mins = [pd.to_numeric(v) for v in stat_output['value_min'].split('\n')]
-	value_means = [pd.to_numeric(v) for v in stat_output['value_mean'].split('\n')]
-	value_medians = [pd.to_numeric(v) for v in stat_output['value_median'].split('\n')]
-	value_maxs = [pd.to_numeric(v) for v in stat_output['value_max'].split('\n')]
 
 	if date_flag:
 		dt1 = pd.to_datetime(df1_sample[col.replace('_numeric', '')], errors='coerce')
@@ -349,20 +342,20 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 	# get distribution
 	scale_flg = 0
 	df1_draw_values = df1_sample_dropna_values
-	df1_draw_value_4 = [value_mins[0], value_means[0], value_medians[0], value_maxs[0]]
+	df1_draw_value_4 = [stat_output['value_min'][0], stat_output['value_mean'][0],
+						stat_output['value_median'][0], stat_output['value_max'][0]]
 
 	df2_draw_values = df2_sample_dropna_values
-	df2_draw_value_4 = [value_mins[1], value_means[1], value_medians[1], value_maxs[1]]
+	df2_draw_value_4 = [stat_output['value_min'][1], stat_output['value_mean'][1],
+						stat_output['value_median'][1], stat_output['value_max'][1]]
 	
-	if both_value_max >= 1000000:
+	if both_value_max >= pow(10, 6):
 		scale_flg = 1
 		df1_draw_values, df1_draw_value_4 = _get_scale_draw_values(df1_draw_values, df1_draw_value_4)
 		df2_draw_values, df2_draw_value_4 = _get_scale_draw_values(df2_draw_values, df2_draw_value_4)
 
 	# calculate correlation between two distributions
-	num_uni1 = int(stat_output['num_uni'].split('\n')[0].split('/')[0])
-	num_uni2 = int(stat_output['num_uni'].split('\n')[1].split('/')[0])
-	if np.max([num_uni1, num_uni2]) <= 100:
+	if np.max(stat_output['num_uni']) <= 100:
 		vc1, vc2 = _value_counts_df(df1_draw_values), _value_counts_df(df2_draw_values)
 		vc = vc1.merge(vc2, on='value', how='outer').fillna(0)
 		obs1, obs2 = vc['count_x'].values * 1.0 / vc['count_x'].sum(), vc['count_y'].values * 1.0 / vc['count_y'].sum()
@@ -391,7 +384,7 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 		plt.title('%s' %(col))
 
 	# if unique level is less than 10, draw countplot instead
-	both_num_uni = np.max([num_uni1, num_uni2])
+	both_num_uni = np.max(stat_output['num_uni'])
 	if both_num_uni <= 10:
 		df1_temp = pd.DataFrame(df1_sample_dropna_values, columns=['value'])
 		df1_temp['type'] = 'table1'
@@ -416,9 +409,11 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 			_draw_texts(text_values=[date_min2, date_max2], draw_value_4=df2_draw_value_4, mark=2,
 						y_low=y_low, y_up=y_up, date_flag=True)
 		else:
-			_draw_texts(text_values=[value_mins[0], value_means[0], value_medians[0], value_maxs[0]],
+			_draw_texts(text_values=[stat_output['value_min'][0], stat_output['value_mean'][0],
+									 stat_output['value_median'][0], stat_output['value_max'][0]],
 						draw_value_4=df1_draw_value_4, mark=1, y_low=y_low, y_up=y_up)
-			_draw_texts(text_values=[value_mins[1], value_means[1], value_medians[1], value_maxs[1]],
+			_draw_texts(text_values=[stat_output['value_min'][1], stat_output['value_mean'][1],
+									 stat_output['value_median'][1], stat_output['value_max'][1]],
 						draw_value_4=df2_draw_value_4, mark=2, y_low=y_low, y_up=y_up)
 			
 	# save the graphs
@@ -433,12 +428,40 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 
 
 def _value_counts_df(values):
+	"""
+	Construct value count dataframe
+
+	Parameters
+	----------
+	values: arrary_like
+		values to construct the value count
+
+	Returns
+	-------
+	value counts dataframe
+	"""
 	temp = pd.DataFrame(pd.Series(values).value_counts(), columns=['count'])
 	temp['value'] = temp.index.values
 	return temp.reset_index(drop=True)
 
 
-def _compare_string(col, _df1, _df2, img_dir):
+def _compare_string(col, _df1, _df2):
+	"""
+	Compare two string type values
+
+	Parameters
+	----------
+	col: string
+		name of column to check
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+
+	Returns
+	-------
+	Dictionary contains the output result
+	"""
 
 	# sampling
 	df1_sample = _df1.copy()
@@ -446,9 +469,7 @@ def _compare_string(col, _df1, _df2, img_dir):
 
 	# get basic stats information
 	stat_output = _simple_stats(col, df1_sample, df2_sample, 'str')
-
-	nan_rates = [pd.to_numeric(v) for v in stat_output['nan_rate'].split('\n')]
-	nan_rate1, nan_rate2 = nan_rates[0], nan_rates[1]
+	nan_rate1, nan_rate2 = stat_output['nan_rate']
 
 	if (nan_rate1 == 1) or (nan_rate2 == 1): 
 		if (nan_rate1 == 1) and (nan_rate2 == 1):
@@ -468,9 +489,10 @@ def _compare_string(col, _df1, _df2, img_dir):
 	# generate the output
 	output = [
 		{'feature': 'column', 'value': col, 'graph': ''},
-		{'feature': 'sample_value', 'value': stat_output['sample_value']},
-		{'feature': 'nan_rate', 'value': stat_output['nan_rate']},
-		{'feature': 'num_uni', 'value': stat_output['num_uni']},
+		{'feature': 'sample_value', 'value': '\n'.join([str(v) for v in stat_output['sample_value']])},
+		{'feature': 'nan_rate', 'value': '\n'.join([str(round(v, 3)) for v in stat_output['nan_rate']])},
+		{'feature': 'num_uni', 'value': '%s/%s\n%s/%s' % (str(stat_output['num_uni'][0]), str(df1_sample.dropna().shape[0]),
+														  str(stat_output['num_uni'][1]), str(df2_sample.dropna().shape[0]))},
 		{'feature': 'overlap', 'value': col_overlap},
 		{'feature': 'only in table1', 'value': col_only_df1},
 		{'feature': 'only in table2', 'value': col_only_df2},
@@ -507,6 +529,24 @@ def _compare_string(col, _df1, _df2, img_dir):
 
 
 def _compare_date(col, _df1, _df2, img_dir):
+	"""
+	Compare two date type values
+
+	Parameters
+	----------
+	col: string
+		name of column to check
+	_df1: pandas DataFrame
+		slice of table1 containing enough information to check
+	_df2: pandas DataFrame
+		slice of table2 containing enough information to check
+	img_dir: root directory for the generated images
+
+	Returns
+	-------
+	Dictionary contains the output result
+	"""
+
 	numeric_output = _compare_numeric(col, _df1, _df2, img_dir, date_flag=True)
 	col = numeric_output['column']
 
@@ -522,6 +562,18 @@ def _compare_date(col, _df1, _df2, img_dir):
 
 
 def _insert_compare_string_results(string_results, ws, row_height):
+	"""
+	Insert string result into a worksheet
+
+	Parameters
+	----------
+	string_results: dict
+		result to insert
+	ws: Excel worksheet instance
+	row_height: float
+		Height of the row
+	"""
+
 	# construct thick border
 	thin = Side(border_style="thin", color="000000")
 	border = Border(top=thin, left=thin, right=thin, bottom=thin)
@@ -571,107 +623,41 @@ def _insert_compare_string_results(string_results, ws, row_height):
 	_adjust_ws(ws, row_height=row_height, row_heights=row_heights, adjust_type='str')
 
 
-"""
-function: compare values of same columns between two tables
-parameters:
-_table1: pandas DataFrame
-	one of the two tables to compare
-_table2: pandas DataFrame
-	one of the two tables to compare
-_schema1: pandas DataFrame
-	data schema (contains column names and corresponding data types) for _table1
-_schema2: pandas DataFrame
-	data schema (contains column names and corresponding data types) for _table2
-fname: string
-	the output file name
-sample_size: integer or float(<=1.0), default=1.0
-	int: number of sample rows to do the comparison (useful for large tables)
-	float: sample size in percentage
-feature_colname1: string, default='column'
-	name of the column for feature of _table1
-feature_colname2: string, default='column'
-	name of the column for feature of _table2
-dtype_colname1: string, default='type'
-	name of the column for data type of _table1
-dtype_colname2: string, default='type'
-	name of the column for data type of _table2
-output_root: string, default=''
-	the root directory for the output file
-keep_images: boolean, default=False
-	whether to keep all generated images
-n_jobs: int, default=1
-	the number of jobs to run in parallel
-"""
 def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', feature_colname2='column', 
 	dtype_colname1='type', dtype_colname2='type', output_root='', keep_images=False, n_jobs=1):
+	"""
+	Compare columns between two tables
 
-	# check _table1 and _table2
-	if type(_table1) != pd.core.frame.DataFrame:
-		raise ValueError('_table1: only accept pandas DataFrame')
-	if type(_table2) != pd.core.frame.DataFrame:
-		raise ValueError('_table2: only accept pandas DataFrame')
-
-	# check _schema1 and _schema2
-	if type(_schema1) != pd.core.frame.DataFrame:
-		raise ValueError('_schema1: only accept pandas DataFrame')
-	if type(_schema2) != pd.core.frame.DataFrame:
-		raise ValueError('_schema2: only accept pandas DataFrame')
-
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
-
-	# check sample_size
-	if (type(sample_size) != int) and (type(sample_size) != float):
-		raise ValueError('sample_size: only accept integer or float value')
-	if sample_size > 1:
-		if int(sample_size) != sample_size:
-			raise ValueError('sample_size: only accept integer when it is > 1.0')
-		if (sample_size > _table1.shape[0]) or (sample_size > _table2.shape[0]):
-			print('sample_size: %d is smaller than %d or %d...' %(sample_size, _table1.shape[0], _table2.shape[0]))
-	else:
-		if sample_size <= 0:
-			raise ValueError('sample_size: should be larger than 0')
-
-	# check fname
-	if type(fname) != str:
-		raise ValueError('fname: only accept string')
-
-	# check feature_colname1 and feature_colname2
-	if type(feature_colname1) != str:
-		raise ValueError('feature_colname1: only accept string value')
-	if not feature_colname1 in _schema1.columns.values:
-		raise ValueError('feature_colname1: column not in _schema1')
-
-	if type(feature_colname2) != str:
-		raise ValueError('feature_colname2: only accept string value')
-	if not feature_colname2 in _schema2.columns.values:
-		raise ValueError('feature_colname2: column not in _schema2')
-
-	# check dtype_colname1 and dtype_colname2
-	if type(dtype_colname1) != str:
-		raise ValueError('dtype_colname1: only accept string value')
-	if not dtype_colname1 in _schema1.columns.values:
-		raise ValueError('dtype_colname1: column not in _schema1')
-
-	if type(dtype_colname2) != str:
-		raise ValueError('dtype_colname2: only accept string value')
-	if not dtype_colname2 in _schema2.columns.values:
-		raise ValueError('dtype_colname2: column not in _schema2')
-
-	# check output_root
-	if output_root != '':
-		if type(output_root) != str:
-			raise ValueError('output_root: only accept string')
-		if not os.path.isdir(output_root):
-			raise ValueError('output_root: root not exists')
-
-	# check n_jobs
-	if type(n_jobs) != int:
-		raise ValueError('n_jobs: only accept integer value') 
+	Parameters
+	----------
+	_table1: pandas DataFrame
+		one of the two tables to compare
+	_table2: pandas DataFrame
+		one of the two tables to compare
+	_schema1: pandas DataFrame
+		data schema (contains column names and corresponding data types) for _table1
+	_schema2: pandas DataFrame
+		data schema (contains column names and corresponding data types) for _table2
+	fname: string
+		the output file name
+	sample_size: integer or float(<=1.0), default=1.0
+		int: number of sample rows to do the comparison (useful for large tables)
+		float: sample size in percentage
+	feature_colname1: string, default='column'
+		name of the column for feature of _table1
+	feature_colname2: string, default='column'
+		name of the column for feature of _table2
+	dtype_colname1: string, default='type'
+		name of the column for data type of _table1
+	dtype_colname2: string, default='type'
+		name of the column for data type of _table2
+	output_root: string, default=''
+		the root directory for the output file
+	keep_images: boolean, default=False
+		whether to keep all generated images
+	n_jobs: int, default=1
+		the number of jobs to run in parallel
+	"""
 
 	# start to compare with correct schemas
 	# create a new workbook to store everything
@@ -756,7 +742,7 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 	# only check features in both tables
 	string_features = [feat for feat in string_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(string_features) > 0:
-		string_results = Parallel(n_jobs=n_jobs)(delayed(_compare_string)(col, table1[[col]], table2[[col]], img_dir) 
+		string_results = Parallel(n_jobs=n_jobs)(delayed(_compare_string)(col, table1[[col]], table2[[col]])
 			for col in string_features)
 
 		for string_result in string_results:
@@ -819,84 +805,34 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 		shutil.rmtree(img_dir)
 
 
-"""
-function: automatically generate ipynb for data comparison
-parameters:
-_table1: pandas DataFrame
-	one of the two tables to compare
-_table2: pandas DataFrame
-	one of the two tables to compare
-_schema1: pandas DataFrame
-	data schema (contains column names and corresponding data types) for _table1
-_schema2: pandas DataFrame
-	data schema (contains column names and corresponding data types) for _table2
-fname: string
-	the output file name
-feature_colname1: string, default='column'
-	name of the column for feature of _table1
-feature_colname2: string, default='column'
-	name of the column for feature of _table2
-dtype_colname1: string, default='type'
-	name of the column for data type of _table1
-dtype_colname2: string, default='type'
-	name of the column for data type of _table2
-output_root: string, default=''
-	the root directory for the output file
-"""
 def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, feature_colname1='column', feature_colname2='column', 
 	dtype_colname1='type', dtype_colname2='type', output_root=''):
+	"""
+	Automatically generate ipynb for data compare process
 
-	# check _table1 and _table2
-	if type(_table1) != pd.core.frame.DataFrame:
-		raise ValueError('_table1: only accept pandas DataFrame')
-	if type(_table2) != pd.core.frame.DataFrame:
-		raise ValueError('_table2: only accept pandas DataFrame')
-
-	# check _schema1 and _schema2
-	if type(_schema1) != pd.core.frame.DataFrame:
-		raise ValueError('_schema1: only accept pandas DataFrame')
-	if type(_schema2) != pd.core.frame.DataFrame:
-		raise ValueError('_schema2: only accept pandas DataFrame')
-
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
-
-	# check fname
-	if type(fname) != str:
-		raise ValueError('fname: only accept string')
-
-	# check feature_colname1 and feature_colname2
-	if type(feature_colname1) != str:
-		raise ValueError('feature_colname1: only accept string value')
-	if not feature_colname1 in _schema1.columns.values:
-		raise ValueError('feature_colname1: column not in _schema1')
-
-	if type(feature_colname2) != str:
-		raise ValueError('feature_colname2: only accept string value')
-	if not feature_colname2 in _schema2.columns.values:
-		raise ValueError('feature_colname2: column not in _schema2')
-
-	# check dtype_colname1 and dtype_colname2
-	if type(dtype_colname1) != str:
-		raise ValueError('dtype_colname1: only accept string value')
-	if not dtype_colname1 in _schema1.columns.values:
-		raise ValueError('dtype_colname1: column not in _schema1')
-
-	if type(dtype_colname2) != str:
-		raise ValueError('dtype_colname2: only accept string value')
-	if not dtype_colname2 in _schema2.columns.values:
-		raise ValueError('dtype_colname2: column not in _schema2')
-
-	# check output_root
-	if output_root != '':
-		if type(output_root) != str:
-			raise ValueError('output_root: only accept string')
-		if not os.path.isdir(output_root):
-			raise ValueError('output_root: root not exists')
+	Parameters
+	----------
+	_table1: pandas DataFrame
+		one of the two tables to compare
+	_table2: pandas DataFrame
+		one of the two tables to compare
+	_schema1: pandas DataFrame
+		data schema (contains column names and corresponding data types) for _table1
+	_schema2: pandas DataFrame
+		data schema (contains column names and corresponding data types) for _table2
+	fname: string
+		the output file name
+	feature_colname1: string, default='column'
+		name of the column for feature of _table1
+	feature_colname2: string, default='column'
+		name of the column for feature of _table2
+	dtype_colname1: string, default='type'
+		name of the column for data type of _table1
+	dtype_colname2: string, default='type'
+		name of the column for data type of _table2
+	output_root: string, default=''
+		the root directory for the output file
+	"""
 
 	# generate output file path 
 	output_path = os.path.join(output_root, 'data_compare_notebook_%s.py' %(fname))
@@ -922,51 +858,26 @@ def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, feature_c
 	schema_error.loc[schema_error['column_2'].isnull(), 'error'] = "column not in table2"
 	schema_correct = schema[schema['type_1'] == schema['type_2']].reset_index(drop=True)
 
+	dir_path = os.path.dirname(os.path.realpath(__file__))
+	main_line = open(dir_path + '/templates/data_compare_main.txt').read()
+	key_line = open(dir_path + '/templates/data_compare_key.txt').read()
+	str_line = open(dir_path + '/templates/data_compare_str.txt').read()
+	numeric_line = open(dir_path + '/templates/data_compare_numeric.txt').read()
+	date_line = open(dir_path + '/templates/data_compare_date.txt').read()
+
 	with open(output_path, "a") as outbook:
-		# import packages
-		outbook.write('\n"""\n')
-		outbook.write('## import useful packages\n\n')
-		outbook.write('"""\n\n')
-		
-		packages = ['import pandas as pd', 'import numpy as np', '\nimport datetime\n', 'import matplotlib.pyplot as plt', 
-		'import seaborn as sns', 'sns.set_style("white")', 'from matplotlib_venn import venn2','\n%matplotlib inline', 
-		'\nfrom pydqc.data_compare import distribution_compare_pretty']
-
-		outbook.write('\n'.join(packages))
-
-		# assign value to table
-		outbook.write('\n"""\n')
-		outbook.write('## assign values\n\n')
-		outbook.write('"""\n\n')
-
-		outbook.write('#the data table (pandas DataFrame)\n')
-		outbook.write('table1 = \n')
-		outbook.write('table2 = \n')
-		outbook.write('print("table1 size: " + str(table1.shape))\n')
-		outbook.write('print("table2 size: " + str(table2.shape))\n\n')
-
-		outbook.write('#global values\n')
-		outbook.write('TABLE1_DARK = "#4BACC6"\n')
-		outbook.write('TABLE1_LIGHT = "#DAEEF3"\n')
-		outbook.write('TABLE2_DARK = "#F79646"\n')
-		outbook.write('TABLE2_LIGHT = "#FDE9D9"\n\n')
-
-		outbook.write('#get date of today\n')
-		outbook.write('snapshot_date_now = str(datetime.datetime.now().date())\n')
-		outbook.write('print("date of today: " + snapshot_date_now)\n')
+		# main
+		outbook.write(main_line)
 
 		# output potentail exist errors
 		if len(schema_error) > 0:
-			outbook.write('\n"""\n')
-			outbook.write('### inconsistent columns between table1 and table2:\n\n')
+			outbook.write('\n"""\n### inconsistent columns between table1 and table2:\n\n')
 			schema_error_dicts = schema_error.to_dict('record')
 			for i in range(len(schema_error_dicts)):
 				outbook.write('%s\n' %(schema_error_dicts[i]))
 			outbook.write('"""\n\n')
 		else:
-			outbook.write('\n"""\n')
-			outbook.write('### columns are consistent between table1 and table2!\n\n')
-			outbook.write('"""\n\n')
+			outbook.write('\n"""\n### columns are consistent between table1 and table2!\n\n"""\n\n')
 
 		# only compare check columns in both table1 and table2, and follow the column order of table1
 		check_cols = [col for col in _table1.columns.values if col in schema_correct['column_1'].values]
@@ -974,161 +885,18 @@ def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, feature_c
 			# get the data type of the column
 			col_type = schema_correct[schema_correct['column_1']==col]['type_1'].values[0]
 
-			outbook.write('\n"""\n')
-			outbook.write('## %s (type: %s)\n\n' %(col, col_type))
-			outbook.write('"""\n\n')
-
-			outbook.write('col="%s"\n' %(col))
-			outbook.write('df1 = table1[[col]].copy()\n')
-			outbook.write('df2 = table2[[col]].copy()\n\n')
-			if col_type == 'date':
-				outbook.write('df1[col] = pd.to_datetime(df1[col], errors="coerce")\n')
-				outbook.write('df1[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df1[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
-				outbook.write('df2[col] = pd.to_datetime(df2[col], errors="coerce")\n')
-				outbook.write('df2[col + "_numeric"] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(df2[col], errors="coerce")).astype("timedelta64[M]", errors="ignore")\n\n')
-
-			# basic statistics comparison
-			outbook.write('\n"""\n')
-			outbook.write('#### basic comparison\n\n')
-			outbook.write('"""\n\n')
-			outbook.write('#sample values\n')
-			outbook.write('\n"""\n')
-			outbook.write('"""\n\n')
-			outbook.write('df1.sample(5)\n')
-			outbook.write('\n"""\n')
-			outbook.write('"""\n\n')
-			outbook.write('df2.sample(5)\n')
-
-			outbook.write('\n"""\n')
-			outbook.write('"""\n\n')
-			outbook.write('#nan_rate\n')
-			outbook.write('nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]\n')
-			outbook.write('nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]\n\n')
-			outbook.write('print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))\n')
-
-			outbook.write('\n"""\n')
-			outbook.write('"""\n\n')
-			outbook.write('#num_uni\n')
-			outbook.write('num_uni1 = df1[col].dropna().nunique()\n')
-			outbook.write('num_uni2 = df2[col].dropna().nunique()\n\n')
-			outbook.write('print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))\n')
-			outbook.write('print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))\n\n')
+			outbook.write('\n"""\n## %s (type: %s)\n\n"""\n\n' %(col, col_type))
+			outbook.write('col = "%s"\n' %(col))
 
 			# for key and str, compare intersection
-			if (col_type == 'key') or (col_type == 'str'):
-				outbook.write('\n"""\n')
-				outbook.write('#### compare intersection\n\n')
-				outbook.write('"""\n\n')
-				outbook.write('set_df1_col = set(df1[col].dropna().values) if nan_rate1 < 1 else set()\n')
-				outbook.write('set_df2_col = set(df2[col].dropna().values) if nan_rate2 < 1 else set()\n')
-				outbook.write('col_overlap = len(set_df1_col.intersection(set_df2_col))\n')
-				outbook.write('col_only_df1, col_only_df2 = len(set_df1_col - set_df2_col), len(set_df2_col - set_df1_col)\n\n')
-				outbook.write('print("col_overlap: " + str(col_overlap) + "; col_only_df1: " + str(col_only_df1) + "; col_only_df2: " + str(col_only_df2))\n')
-
-				# draw venn graph for key
-				if col_type == 'key':
-					outbook.write('\n"""\n')
-					outbook.write('#### draw venn graph\n\n')
-					outbook.write('"""\n\n')
-					outbook.write('plt.figure(figsize=(10, 5))\n')
-					outbook.write('venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"], set_colors=("#4BACC6", "#F79646"), alpha=0.8)\n')
-				else:
-					# check simple value counts for str
-					outbook.write('\n"""\n')
-					outbook.write('#### check value counts\n\n')
-					outbook.write('"""\n\n')
-					outbook.write('value_counts_df1 = pd.DataFrame(df1[col].value_counts())\n')
-					outbook.write('value_counts_df1.columns = ["count_1"]\n')
-					outbook.write('value_counts_df1[col] = value_counts_df1.index.values\n')
-					outbook.write('value_counts_df1 = value_counts_df1.reset_index(drop=True)[[col, "count_1"]]\n')
-					outbook.write('value_counts_df1 = value_counts_df1.sort_values(by="count_1", ascending=False).head(10)\n\n')
-					outbook.write('value_counts_df2 = pd.DataFrame(df2[col].value_counts())\n')
-					outbook.write('value_counts_df2.columns = ["count_2"]\n')
-					outbook.write('value_counts_df2[col] = value_counts_df2.index.values\n')
-					outbook.write('value_counts_df2 = value_counts_df2.reset_index(drop=True)[[col, "count_2"]]\n')
-					outbook.write('value_counts_df2 = value_counts_df2.sort_values(by="count_2", ascending=False).head(10)\n\n')
-					outbook.write('value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").fillna(0)\n')
-					
-					outbook.write('\n"""\n')
-					outbook.write('"""\n\n')
-					outbook.write('value_counts_df\n')
+			if col_type == 'key':
+				outbook.write(key_line)
+			elif col_type == 'str':
+				outbook.write(str_line)
+			elif col_type == 'numeric':
+				outbook.write(numeric_line)
 			else:
-				if col_type == 'date':
-					outbook.write('\n"""\n')
-					outbook.write('"""\n\n')
-					outbook.write('#min date\n')
-					outbook.write('date_min1=df1[col].min()\n')
-					outbook.write('date_min2=df2[col].min()\n')
-					outbook.write('print("table1 date_min: " + str(date_min1) + "; table2 date_min: " + str(date_min2))\n\n')
-
-					outbook.write('#max date\n')
-					outbook.write('date_max1=df1[col].max()\n')
-					outbook.write('date_max2=df2[col].max()\n')
-					outbook.write('print("table1 date_max: " + str(date_max1) + "; table2 date_max: " + str(date_max2))\n\n')
-
-					outbook.write('#min value\n')
-					outbook.write('value_min1=df1[col + "_numeric"].min()\n')
-					outbook.write('value_min2=df2[col + "_numeric"].min()\n')
-					outbook.write('print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))\n\n')
-
-					outbook.write('#mean value\n')
-					outbook.write('value_mean1=df1[col + "_numeric"].mean()\n')
-					outbook.write('value_mean2=df2[col + "_numeric"].mean()\n')
-					outbook.write('print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))\n\n')
-
-					outbook.write('#median value\n')
-					outbook.write('value_median1=df1[col + "_numeric"].median()\n')
-					outbook.write('value_median2=df2[col + "_numeric"].median()\n')
-					outbook.write('print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))\n\n')
-
-					outbook.write('#max value\n')
-					outbook.write('value_max1=df1[col + "_numeric"].max()\n')
-					outbook.write('value_max2=df2[col + "_numeric"].max()\n')
-					outbook.write('print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))\n\n')
-				else:
-					outbook.write('#min value\n')
-					outbook.write('value_min1=df1[col].min()\n')
-					outbook.write('value_min2=df2[col].min()\n')
-					outbook.write('print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))\n\n')
-
-					outbook.write('#mean value\n')
-					outbook.write('value_mean1=df1[col].mean()\n')
-					outbook.write('value_mean2=df2[col].mean()\n')
-					outbook.write('print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))\n\n')
-
-					outbook.write('#median value\n')
-					outbook.write('value_median1=df1[col].median()\n')
-					outbook.write('value_median2=df2[col].median()\n')
-					outbook.write('print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))\n\n')
-
-					outbook.write('#max value\n')
-					outbook.write('value_max1=df1[col].max()\n')
-					outbook.write('value_max2=df2[col].max()\n')
-					outbook.write('print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))\n\n')
-
-				outbook.write('\n"""\n')
-				outbook.write('#### check distribution\n\n')
-				outbook.write('"""\n\n')
-
-				if col_type == 'date':
-					outbook.write('value_dropna_df1 = df1[col + "_numeric"].dropna().values\n')
-					outbook.write('value_dropna_df2 = df2[col + "_numeric"].dropna().values\n')
-				else:
-					outbook.write('value_dropna_df1 = df1[col].dropna().values\n')
-					outbook.write('value_dropna_df2 = df2[col].dropna().values\n')
-
-				# draw the distribution graph
-				outbook.write('plt.figure(figsize=(10, 5))\n')
-				outbook.write('sns.distplot(value_dropna_df1, color="#4BACC6", norm_hist=True, hist=False, label="table1")\n')
-				outbook.write('sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, label="table2")\n')
-				outbook.write('\n"""\n')
-				outbook.write('"""\n\n')
-				outbook.write('#you can also use the build-in draw function\n')
-				if col_type == 'date':
-					outbook.write('distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=True)\n')
-				else:
-					outbook.write('distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)\n')
-
+				outbook.write(date_line)
 		outbook.close()
 
 	os.system("python -m py2nb %s %s" %(output_path, output_path.replace('.py', '.ipynb')))

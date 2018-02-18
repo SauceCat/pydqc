@@ -1,0 +1,14 @@
+
+value_df = table[[col]].copy()
+nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
+num_uni = value_df[col].dropna().nunique()
+
+print("nan_rate: " + str(nan_rate))
+print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
+
+"""
+#### check value counts
+
+"""
+
+value_df[col].value_counts().head(10)

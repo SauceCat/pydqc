@@ -1,0 +1,46 @@
+
+df1 = table1[[key1, col]].copy()
+df2 = table2[[key2, col]].copy()
+
+"""
+#### check pairwise consistency
+
+"""
+
+# merge 2 tables
+df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
+df = df.dropna(how='any', subset=[col + "_x", col + "_y"]).reset_index(drop=True)
+
+corr = round(spearmanr(df[col + "_x"].values, df[col + "_y"].values)[0], 3)
+print("consistency rate: " + str(corr))
+
+"""
+#### draw consistency graph
+
+"""
+
+# prepare data
+df["diff_temp"] = df[col + "_y"] - df[col + "_x"]
+draw_values = df["diff_temp"].dropna().values
+
+both_min = np.min([df[col + "_x"].min(), df[col + "_y"].min()])
+both_max = np.max([df[col + "_x"].max(), df[col + "_y"].max()])
+
+# draw
+plt.figure(figsize=(12, 6))
+plt.subplot(121)
+plt.scatter(df[col + "_x"].values, df[col + "_y"].values, c=TABLE1_DARK, s=5)
+plt.plot([both_min, both_max], [both_min, both_max], "--", c="#bbbbbb")
+plt.xlim(both_min, both_max)
+plt.ylim(both_min, both_max)
+plt.title("corr: %.3f" %(corr))
+
+plt.subplot(122)
+sns.distplot(draw_values, color=TABLE2_DARK)
+plt.title("Distribution of differences")
+
+"""
+"""
+
+#you can also use the build-in draw function
+numeric_consist_pretty(df1, df2, key1, key2, col)
