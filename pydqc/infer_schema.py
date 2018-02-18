@@ -4,8 +4,8 @@ import os
 
 import openpyxl
 from openpyxl.utils.dataframe import dataframe_to_rows
-from openpyxl.styles import Font, PatternFill, Protection, NamedStyle, Alignment
-from openpyxl.formatting.rule import ColorScaleRule, FormulaRule
+from openpyxl.styles import Font, PatternFill
+from openpyxl.formatting.rule import FormulaRule
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from sklearn.externals.joblib import Parallel, delayed
@@ -18,6 +18,21 @@ from dqc_utils import _adjust_ws
 
 
 def _infer_dtype(sample_data, col, type_threshold):
+	"""
+	Infer data type for a single column
+
+	Parameters
+	----------
+	sample_data: array_like
+		data sample to infer
+	col: column name
+	type_threshold: threshold for assigning data type
+
+	Returns
+	-------
+	Dictionary containing type information
+	"""
+
 	# get basic dtype from pandas
 	col_dtype = str(pd.Series(sample_data).dtype)
 
@@ -45,6 +60,21 @@ def _infer_dtype(sample_data, col, type_threshold):
 
 
 def _cal_column_stat(sample_data, col, col_type):
+	"""
+	Calculate statistical information for a single column
+
+	Parameters
+	----------
+	sample_data: array_like
+		data sample
+	col: column name
+	col_type: data type of the column
+
+	Returns
+	-------
+	Dictionary containing statistical information for that column
+	"""
+
 	col_stat = {}
 	col_stat['column'] = col
 
@@ -84,80 +114,33 @@ def _cal_column_stat(sample_data, col, col_type):
 	return col_stat
 
 
-"""
-function: infer data types for all columns for the input table
-parameters:
-_data: pandas DataFrame
-	data table to infer
-fname: string
-	the output file name
-output_root: string, default=''
-	the root directory for the output file
-sample_size: int or float(<= 1.0), default=1.0
-	int: number of sample rows to infer the data type (useful for large tables)
-	float: sample size in percentage
-type_threshold: float(<= 1.0), default=0.5
-	threshold for inferring data type
-n_jobs: int, default=1
-	the number of jobs to run in parallel
-base_schema: pandas DataFrame, default=None
-	data schema to base on
-base_schema_feature_colname: string
-	feature_colname in base schema
-base_schema_dtype_colname: string
-	dtype_colname in base schema
-"""
 def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0.5, n_jobs=1, 
 	base_schema=None, base_schema_feature_colname='column', base_schema_dtype_colname='type'):
-	# check _data
-	if type(_data) != pd.core.frame.DataFrame:
-		raise ValueError('_data: only accept pandas DataFrame')
+	"""
+	Infer data types for all columns for the input table
 
-	# check sample_size
-	if (type(sample_size) != int) and (type(sample_size) != float):
-		raise ValueError('sample_size: only accept integer or float value')
-	if sample_size > 1:
-		if int(sample_size) != sample_size:
-			raise ValueError('sample_size: only accept integer when it is > 1.0')
-		if sample_size > _data.shape[0]:
-			print("sample_size: %d is larger than the data size: %d" %(sample_size, _data.shape[0]))
-	else:
-		if sample_size <= 0:
-			raise ValueError('sample_size: should be larger than 0')
-
-	# check fname
-	if type(fname) != str:
-		raise ValueError('fname: only accept string')
-
-	# check output_root
-	if output_root != '':
-		if type(output_root) != str:
-			raise ValueError('output_root: only accept string')
-		if not os.path.isdir(output_root):
-			raise ValueError('output_root: root not exists')
-
-	# check type_threshold
-	if type(type_threshold) != float:
-		raise ValueError('type_threshold: only accept float value')
-	if (type_threshold <= 0) or (type_threshold > 1):
-		raise ValueError('type_threshold: should be in (0, 1]') 
-
-	# check n_jobs
-	if type(n_jobs) != int:
-		raise ValueError('n_jobs: only accept integer value') 
-
-	# check base_schema
-	if base_schema is not None:
-		if type(base_schema) != pd.core.frame.DataFrame:
-			raise ValueError('base_schema: only accept pandas DataFrame')
-		if type(base_schema_feature_colname) != str:
-			raise ValueError('base_schema_feature_colname: only accept string value')
-		if not base_schema_feature_colname in base_schema.columns.values:
-			raise ValueError('base_schema_feature_colname: column not in base schema')
-		if type(base_schema_dtype_colname) != str:
-			raise ValueError('base_schema_dtype_colname: only accept string value')
-		if not base_schema_dtype_colname in base_schema.columns.values:
-			raise ValueError('base_schema_dtype_colname: column not in base schema')  
+	Parameters
+	----------
+	_data: pandas DataFrame
+		data table to infer
+	fname: string
+		the output file name
+	output_root: string, default=''
+		the root directory for the output file
+	sample_size: int or float(<= 1.0), default=1.0
+		int: number of sample rows to infer the data type (useful for large tables)
+		float: sample size in percentage
+	type_threshold: float(<= 1.0), default=0.5
+		threshold for inferring data type
+	n_jobs: int, default=1
+		the number of jobs to run in parallel
+	base_schema: pandas DataFrame, default=None
+		data schema to base on
+	base_schema_feature_colname: string
+		feature_colname in base schema
+	base_schema_dtype_colname: string
+		dtype_colname in base schema
+	"""
 
 	# copy raw data table
 	data = _data.copy()
@@ -197,7 +180,8 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 	
 	# merge dtype infomation with stat information
 	full_infos_df = type_infos_df.merge(stat_infos_df, on='column', how='left')
-	full_infos_df = full_infos_df[['column', 'type', 'sample_value', 'sample_num_uni', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
+	full_infos_df = full_infos_df[['column', 'type', 'sample_value', 'sample_num_uni', 'sample_min',
+								   'sample_median', 'sample_max', 'sample_std']]
 
 	# if base_schema is provided, we can compare with base schema
 	if base_schema is not None:
@@ -210,7 +194,8 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		full_infos_df['column'] = full_infos_df['column'].apply(lambda x : 'column not in current table' if pd.isnull(x) else x)
 
 		# reorder the column
-		full_infos_df = full_infos_df[['column', 'base_column', 'type', 'base_type', 'sample_value', 'sample_num_uni', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
+		full_infos_df = full_infos_df[['column', 'base_column', 'type', 'base_type', 'sample_value',
+									   'sample_num_uni', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
 
 
 	# add data validation for type column
@@ -239,8 +224,6 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 	red_font = Font(color="9C0006")
 	green_fill = PatternFill(bgColor="C6EFCE")
 	green_font = Font(color="006100")
-	yellow_fill = PatternFill(bgColor="ffeb9c")
-	yellow_font = Font(color="9c6500")
 
 	# red highlight if there is any inconsistent between base and the target
 	if base_schema is not None:
@@ -278,9 +261,11 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 
 	# red highlight for sample_num_uni = 0 or 1, only one unique value
 	ws.conditional_formatting.add('%s2:%s%d' %(column_mapping['sample_num_uni'], column_mapping['sample_num_uni'], ws.max_row), 
-								  FormulaRule(formula=['%s2=0' %(column_mapping['sample_num_uni'])], stopIfTrue=True, fill=red_fill, font=red_font))
+								  FormulaRule(formula=['%s2=0' %(column_mapping['sample_num_uni'])], stopIfTrue=True,
+											  fill=red_fill, font=red_font))
 	ws.conditional_formatting.add('%s2:%s%d' %(column_mapping['sample_num_uni'], column_mapping['sample_num_uni'], ws.max_row), 
-								  FormulaRule(formula=['%s2=1' %(column_mapping['sample_num_uni'])], stopIfTrue=True, fill=red_fill, font=red_font))
+								  FormulaRule(formula=['%s2=1' %(column_mapping['sample_num_uni'])], stopIfTrue=True,
+											  fill=red_fill, font=red_font))
 
 	# adjust the column format for the worksheet
 	_adjust_ws(ws=ws, row_height=20)
