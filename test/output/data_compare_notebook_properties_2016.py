@@ -17,27 +17,27 @@ from matplotlib_venn import venn2
 %matplotlib inline
 
 from pydqc.data_compare import distribution_compare_pretty
+
 """
 ## assign values
 
 """
 
-#the data table (pandas DataFrame)
-table1 = 
-table2 = 
+# the data table (pandas DataFrame)
+table1 =
+table2 =
 print("table1 size: " + str(table1.shape))
 print("table2 size: " + str(table2.shape))
 
-#global values
+# global values
 TABLE1_DARK = "#4BACC6"
 TABLE1_LIGHT = "#DAEEF3"
 TABLE2_DARK = "#F79646"
 TABLE2_LIGHT = "#FDE9D9"
 
-#get date of today
+# get date of today
 snapshot_date_now = str(datetime.datetime.now().date())
 print("date of today: " + snapshot_date_now)
-
 """
 ### columns are consistent between table1 and table2!
 
@@ -49,17 +49,16 @@ print("date of today: " + snapshot_date_now)
 
 """
 
-col="parcelid"
+col = "parcelid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -74,7 +73,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -83,7 +82,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -109,24 +108,22 @@ print("col_overlap: " + str(col_overlap) + "; col_only_df1: " + str(col_only_df1
 """
 
 plt.figure(figsize=(10, 5))
-venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"], set_colors=("#4BACC6", "#F79646"), alpha=0.8)
-
+venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"],set_colors=("#4BACC6", "#F79646"), alpha=0.8)
 """
 ## airconditioningtypeid (type: str)
 
 """
 
-col="airconditioningtypeid"
+col = "airconditioningtypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -141,7 +138,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -150,7 +147,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -193,23 +190,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## architecturalstyletypeid (type: str)
 
 """
 
-col="architecturalstyletypeid"
+col = "architecturalstyletypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -224,7 +219,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -233,7 +228,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -276,23 +271,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## basementsqft (type: numeric)
 
 """
 
-col="basementsqft"
+col = "basementsqft"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -307,42 +301,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -358,25 +353,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## bathroomcnt (type: numeric)
 
 """
 
-col="bathroomcnt"
+col = "bathroomcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -391,42 +385,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -442,25 +437,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## bedroomcnt (type: numeric)
 
 """
 
-col="bedroomcnt"
+col = "bedroomcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -475,42 +469,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -526,25 +521,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## buildingclasstypeid (type: str)
 
 """
 
-col="buildingclasstypeid"
+col = "buildingclasstypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -559,7 +552,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -568,7 +561,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -611,23 +604,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## buildingqualitytypeid (type: str)
 
 """
 
-col="buildingqualitytypeid"
+col = "buildingqualitytypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -642,7 +633,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -651,7 +642,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -694,23 +685,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## calculatedbathnbr (type: numeric)
 
 """
 
-col="calculatedbathnbr"
+col = "calculatedbathnbr"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -725,42 +715,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -776,25 +767,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## decktypeid (type: str)
 
 """
 
-col="decktypeid"
+col = "decktypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -809,7 +798,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -818,7 +807,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -861,23 +850,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## finishedfloor1squarefeet (type: numeric)
 
 """
 
-col="finishedfloor1squarefeet"
+col = "finishedfloor1squarefeet"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -892,42 +880,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -943,25 +932,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## calculatedfinishedsquarefeet (type: numeric)
 
 """
 
-col="calculatedfinishedsquarefeet"
+col = "calculatedfinishedsquarefeet"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -976,42 +964,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1027,25 +1016,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet12 (type: numeric)
 
 """
 
-col="finishedsquarefeet12"
+col = "finishedsquarefeet12"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1060,42 +1048,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1111,25 +1100,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet13 (type: numeric)
 
 """
 
-col="finishedsquarefeet13"
+col = "finishedsquarefeet13"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1144,42 +1132,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1195,25 +1184,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet15 (type: numeric)
 
 """
 
-col="finishedsquarefeet15"
+col = "finishedsquarefeet15"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1228,42 +1216,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1279,25 +1268,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet50 (type: numeric)
 
 """
 
-col="finishedsquarefeet50"
+col = "finishedsquarefeet50"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1312,42 +1300,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1363,25 +1352,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet6 (type: numeric)
 
 """
 
-col="finishedsquarefeet6"
+col = "finishedsquarefeet6"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1396,42 +1384,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1447,25 +1436,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## fips (type: str)
 
 """
 
-col="fips"
+col = "fips"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1480,7 +1467,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -1489,7 +1476,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -1532,23 +1519,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## fireplacecnt (type: numeric)
 
 """
 
-col="fireplacecnt"
+col = "fireplacecnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1563,42 +1549,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1614,25 +1601,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## fullbathcnt (type: numeric)
 
 """
 
-col="fullbathcnt"
+col = "fullbathcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1647,42 +1633,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1698,25 +1685,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## garagecarcnt (type: numeric)
 
 """
 
-col="garagecarcnt"
+col = "garagecarcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1731,42 +1717,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1782,25 +1769,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## garagetotalsqft (type: numeric)
 
 """
 
-col="garagetotalsqft"
+col = "garagetotalsqft"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1815,42 +1801,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -1866,25 +1853,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## hashottuborspa (type: str)
 
 """
 
-col="hashottuborspa"
+col = "hashottuborspa"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1899,7 +1884,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -1908,7 +1893,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -1951,23 +1936,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## heatingorsystemtypeid (type: str)
 
 """
 
-col="heatingorsystemtypeid"
+col = "heatingorsystemtypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -1982,7 +1965,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -1991,7 +1974,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2034,23 +2017,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## latitude (type: numeric)
 
 """
 
-col="latitude"
+col = "latitude"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2065,42 +2047,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -2116,25 +2099,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## longitude (type: numeric)
 
 """
 
-col="longitude"
+col = "longitude"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2149,42 +2131,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -2200,25 +2183,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## lotsizesquarefeet (type: numeric)
 
 """
 
-col="lotsizesquarefeet"
+col = "lotsizesquarefeet"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2233,42 +2215,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -2284,25 +2267,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## poolcnt (type: numeric)
 
 """
 
-col="poolcnt"
+col = "poolcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2317,42 +2299,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -2368,25 +2351,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## poolsizesum (type: numeric)
 
 """
 
-col="poolsizesum"
+col = "poolsizesum"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2401,42 +2383,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -2452,25 +2435,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## pooltypeid10 (type: str)
 
 """
 
-col="pooltypeid10"
+col = "pooltypeid10"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2485,7 +2466,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2494,7 +2475,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2537,23 +2518,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## pooltypeid2 (type: str)
 
 """
 
-col="pooltypeid2"
+col = "pooltypeid2"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2568,7 +2547,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2577,7 +2556,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2620,23 +2599,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## pooltypeid7 (type: str)
 
 """
 
-col="pooltypeid7"
+col = "pooltypeid7"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2651,7 +2628,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2660,7 +2637,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2703,23 +2680,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## propertycountylandusecode (type: str)
 
 """
 
-col="propertycountylandusecode"
+col = "propertycountylandusecode"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2734,7 +2709,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2743,7 +2718,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2786,23 +2761,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## propertylandusetypeid (type: str)
 
 """
 
-col="propertylandusetypeid"
+col = "propertylandusetypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2817,7 +2790,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2826,7 +2799,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2869,23 +2842,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## propertyzoningdesc (type: str)
 
 """
 
-col="propertyzoningdesc"
+col = "propertyzoningdesc"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2900,7 +2871,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2909,7 +2880,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -2952,23 +2923,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## rawcensustractandblock (type: key)
 
 """
 
-col="rawcensustractandblock"
+col = "rawcensustractandblock"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -2983,7 +2952,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -2992,7 +2961,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3018,24 +2987,22 @@ print("col_overlap: " + str(col_overlap) + "; col_only_df1: " + str(col_only_df1
 """
 
 plt.figure(figsize=(10, 5))
-venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"], set_colors=("#4BACC6", "#F79646"), alpha=0.8)
-
+venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"],set_colors=("#4BACC6", "#F79646"), alpha=0.8)
 """
 ## regionidcity (type: str)
 
 """
 
-col="regionidcity"
+col = "regionidcity"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3050,7 +3017,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3059,7 +3026,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3102,23 +3069,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## regionidcounty (type: str)
 
 """
 
-col="regionidcounty"
+col = "regionidcounty"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3133,7 +3098,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3142,7 +3107,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3185,23 +3150,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## regionidneighborhood (type: str)
 
 """
 
-col="regionidneighborhood"
+col = "regionidneighborhood"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3216,7 +3179,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3225,7 +3188,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3268,23 +3231,21 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## regionidzip (type: str)
 
 """
 
-col="regionidzip"
+col = "regionidzip"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3299,7 +3260,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3308,7 +3269,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3351,23 +3312,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## roomcnt (type: numeric)
 
 """
 
-col="roomcnt"
+col = "roomcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3382,42 +3342,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -3433,25 +3394,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## storytypeid (type: str)
 
 """
 
-col="storytypeid"
+col = "storytypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3466,7 +3425,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3475,7 +3434,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3518,23 +3477,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## threequarterbathnbr (type: numeric)
 
 """
 
-col="threequarterbathnbr"
+col = "threequarterbathnbr"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3549,42 +3507,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -3600,25 +3559,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## typeconstructiontypeid (type: str)
 
 """
 
-col="typeconstructiontypeid"
+col = "typeconstructiontypeid"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3633,7 +3590,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3642,7 +3599,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -3685,23 +3642,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## unitcnt (type: numeric)
 
 """
 
-col="unitcnt"
+col = "unitcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3716,42 +3672,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -3767,25 +3724,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## yardbuildingsqft17 (type: numeric)
 
 """
 
-col="yardbuildingsqft17"
+col = "yardbuildingsqft17"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3800,42 +3756,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -3851,25 +3808,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## yardbuildingsqft26 (type: numeric)
 
 """
 
-col="yardbuildingsqft26"
+col = "yardbuildingsqft26"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3884,42 +3840,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -3935,25 +3892,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## yearbuilt (type: str)
 
 """
 
-col="yearbuilt"
+col = "yearbuilt"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -3968,7 +3923,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -3977,7 +3932,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -4020,23 +3975,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## numberofstories (type: numeric)
 
 """
 
-col="numberofstories"
+col = "numberofstories"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4051,42 +4005,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4102,25 +4057,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## fireplaceflag (type: str)
 
 """
 
-col="fireplaceflag"
+col = "fireplaceflag"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4135,7 +4088,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -4144,7 +4097,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -4187,23 +4140,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## structuretaxvaluedollarcnt (type: numeric)
 
 """
 
-col="structuretaxvaluedollarcnt"
+col = "structuretaxvaluedollarcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4218,42 +4170,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4269,25 +4222,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## taxvaluedollarcnt (type: numeric)
 
 """
 
-col="taxvaluedollarcnt"
+col = "taxvaluedollarcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4302,42 +4254,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4353,25 +4306,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## assessmentyear (type: str)
 
 """
 
-col="assessmentyear"
+col = "assessmentyear"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4386,7 +4337,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -4395,7 +4346,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -4438,23 +4389,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## landtaxvaluedollarcnt (type: numeric)
 
 """
 
-col="landtaxvaluedollarcnt"
+col = "landtaxvaluedollarcnt"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4469,42 +4419,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4520,25 +4471,24 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## taxamount (type: numeric)
 
 """
 
-col="taxamount"
+col = "taxamount"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4553,42 +4503,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4604,25 +4555,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## taxdelinquencyflag (type: str)
 
 """
 
-col="taxdelinquencyflag"
+col = "taxdelinquencyflag"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4637,7 +4586,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -4646,7 +4595,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -4689,23 +4638,22 @@ value_counts_df = value_counts_df1.merge(value_counts_df2, on=col, how="outer").
 """
 
 value_counts_df
-
 """
 ## taxdelinquencyyear (type: numeric)
 
 """
 
-col="taxdelinquencyyear"
+col = "taxdelinquencyyear"
+
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4720,42 +4668,43 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
 print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rate2))
 
 """
+#### check basic stats
+
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
 print("table1 num_uni out of " + str(df1[col].dropna().shape[0]) + ": " + str(num_uni1))
 print("table2 num_uni out of " + str(df2[col].dropna().shape[0]) + ": " + str(num_uni2))
 
-#min value
-value_min1=df1[col].min()
-value_min2=df2[col].min()
+# min value
+value_min1 = df1[col].min()
+value_min2 = df2[col].min()
 print("table1 min: " + str(value_min1) + "; table2 min: " + str(value_min2))
 
-#mean value
-value_mean1=df1[col].mean()
-value_mean2=df2[col].mean()
+# mean value
+value_mean1 = df1[col].mean()
+value_mean2 = df2[col].mean()
 print("table1 mean: " + str(value_mean1) + "; table2 mean: " + str(value_mean2))
 
-#median value
-value_median1=df1[col].median()
-value_median2=df2[col].median()
+# median value
+value_median1 = df1[col].median()
+value_median2 = df2[col].median()
 print("table1 median: " + str(value_median1) + "; table2 median: " + str(value_median2))
 
-#max value
-value_max1=df1[col].max()
-value_max2=df2[col].max()
+# max value
+value_max1 = df1[col].max()
+value_max2 = df2[col].max()
 print("table1 max: " + str(value_max1) + "; table2 max: " + str(value_max2))
-
 
 """
 #### check distribution
@@ -4771,25 +4720,23 @@ sns.distplot(value_dropna_df2, color="#F79646", norm_hist=True, hist=False, labe
 """
 """
 
-#you can also use the build-in draw function
+# you can also use the build-in draw function
 distribution_compare_pretty(df1, df2, col, figsize=None, date_flag=False)
-
 """
 ## censustractandblock (type: key)
 
 """
 
-col="censustractandblock"
+col = "censustractandblock"
 df1 = table1[[col]].copy()
 df2 = table2[[col]].copy()
-
 
 """
 #### basic comparison
 
 """
 
-#sample values
+# sample values
 
 """
 """
@@ -4804,7 +4751,7 @@ df2.sample(5)
 """
 """
 
-#nan_rate
+# nan_rate
 nan_rate1 = df1[df1[col].isnull()].shape[0] * 1.0 / df1.shape[0]
 nan_rate2 = df2[df2[col].isnull()].shape[0] * 1.0 / df2.shape[0]
 
@@ -4813,7 +4760,7 @@ print("table1 nan_rate: " + str(nan_rate1) + "; table2 nan_rate: " + str(nan_rat
 """
 """
 
-#num_uni
+# num_uni
 num_uni1 = df1[col].dropna().nunique()
 num_uni2 = df2[col].dropna().nunique()
 
@@ -4839,4 +4786,4 @@ print("col_overlap: " + str(col_overlap) + "; col_only_df1: " + str(col_only_df1
 """
 
 plt.figure(figsize=(10, 5))
-venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"], set_colors=("#4BACC6", "#F79646"), alpha=0.8)
+venn2([set_df1_col, set_df2_col], set_labels=["table1", "table2"],set_colors=("#4BACC6", "#F79646"), alpha=0.8)

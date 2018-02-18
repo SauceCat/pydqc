@@ -16,24 +16,25 @@ sns.set_style("white")
 %matplotlib inline
 
 from pydqc.data_summary import distribution_summary_pretty
+
+
 """
 ## assign values
 
 """
 
-#the data table (pandas DataFrame)
-table = 
+# the data table (pandas DataFrame)
+table =
 print("table size: " + str(table.shape))
 
-#global values
+# global values
 VER_LINE = "#4BACC6"
 TEXT_LIGHT = "#DAEEF3"
 DIS_LINE = "#F79646"
 
-#get date of today
+# get date of today
 snapshot_date_now = str(datetime.datetime.now().date())
 print("date of today: " + snapshot_date_now)
-
 """
 ### columns are consistent between table_schema and table! 
 
@@ -45,7 +46,8 @@ print("date of today: " + snapshot_date_now)
 
 """
 
-col="parcelid"
+col = "parcelid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -59,13 +61,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## airconditioningtypeid (type: str)
 
 """
 
-col="airconditioningtypeid"
+col = "airconditioningtypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -79,13 +81,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## architecturalstyletypeid (type: str)
 
 """
 
-col="architecturalstyletypeid"
+col = "architecturalstyletypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -99,13 +101,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## basementsqft (type: numeric)
 
 """
 
-col="basementsqft"
+col = "basementsqft"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -143,13 +145,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## bathroomcnt (type: numeric)
 
 """
 
-col="bathroomcnt"
+col = "bathroomcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -187,13 +189,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## bedroomcnt (type: numeric)
 
 """
 
-col="bedroomcnt"
+col = "bedroomcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -231,13 +233,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## buildingclasstypeid (type: str)
 
 """
 
-col="buildingclasstypeid"
+col = "buildingclasstypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -251,13 +253,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## buildingqualitytypeid (type: str)
 
 """
 
-col="buildingqualitytypeid"
+col = "buildingqualitytypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -271,13 +273,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## calculatedbathnbr (type: numeric)
 
 """
 
-col="calculatedbathnbr"
+col = "calculatedbathnbr"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -315,13 +317,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## decktypeid (type: str)
 
 """
 
-col="decktypeid"
+col = "decktypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -335,13 +337,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## finishedfloor1squarefeet (type: numeric)
 
 """
 
-col="finishedfloor1squarefeet"
+col = "finishedfloor1squarefeet"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -379,13 +381,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## calculatedfinishedsquarefeet (type: numeric)
 
 """
 
-col="calculatedfinishedsquarefeet"
+col = "calculatedfinishedsquarefeet"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -423,13 +425,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet12 (type: numeric)
 
 """
 
-col="finishedsquarefeet12"
+col = "finishedsquarefeet12"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -467,13 +469,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet13 (type: numeric)
 
 """
 
-col="finishedsquarefeet13"
+col = "finishedsquarefeet13"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -511,13 +513,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet15 (type: numeric)
 
 """
 
-col="finishedsquarefeet15"
+col = "finishedsquarefeet15"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -555,13 +557,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet50 (type: numeric)
 
 """
 
-col="finishedsquarefeet50"
+col = "finishedsquarefeet50"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -599,13 +601,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## finishedsquarefeet6 (type: numeric)
 
 """
 
-col="finishedsquarefeet6"
+col = "finishedsquarefeet6"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -643,13 +645,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## fips (type: str)
 
 """
 
-col="fips"
+col = "fips"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -663,13 +665,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## fireplacecnt (type: numeric)
 
 """
 
-col="fireplacecnt"
+col = "fireplacecnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -707,13 +709,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## fullbathcnt (type: numeric)
 
 """
 
-col="fullbathcnt"
+col = "fullbathcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -751,13 +753,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## garagecarcnt (type: numeric)
 
 """
 
-col="garagecarcnt"
+col = "garagecarcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -795,13 +797,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## garagetotalsqft (type: numeric)
 
 """
 
-col="garagetotalsqft"
+col = "garagetotalsqft"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -839,13 +841,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## hashottuborspa (type: str)
 
 """
 
-col="hashottuborspa"
+col = "hashottuborspa"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -859,13 +861,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## heatingorsystemtypeid (type: str)
 
 """
 
-col="heatingorsystemtypeid"
+col = "heatingorsystemtypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -879,13 +881,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## latitude (type: numeric)
 
 """
 
-col="latitude"
+col = "latitude"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -923,13 +925,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## longitude (type: numeric)
 
 """
 
-col="longitude"
+col = "longitude"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -967,13 +969,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## lotsizesquarefeet (type: numeric)
 
 """
 
-col="lotsizesquarefeet"
+col = "lotsizesquarefeet"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1011,13 +1013,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## poolcnt (type: numeric)
 
 """
 
-col="poolcnt"
+col = "poolcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1055,13 +1057,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## poolsizesum (type: numeric)
 
 """
 
-col="poolsizesum"
+col = "poolsizesum"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1099,13 +1101,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## pooltypeid10 (type: str)
 
 """
 
-col="pooltypeid10"
+col = "pooltypeid10"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1119,13 +1121,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## pooltypeid2 (type: str)
 
 """
 
-col="pooltypeid2"
+col = "pooltypeid2"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1139,13 +1141,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## pooltypeid7 (type: str)
 
 """
 
-col="pooltypeid7"
+col = "pooltypeid7"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1159,13 +1161,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## propertycountylandusecode (type: str)
 
 """
 
-col="propertycountylandusecode"
+col = "propertycountylandusecode"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1179,13 +1181,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## propertylandusetypeid (type: str)
 
 """
 
-col="propertylandusetypeid"
+col = "propertylandusetypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1199,13 +1201,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## propertyzoningdesc (type: str)
 
 """
 
-col="propertyzoningdesc"
+col = "propertyzoningdesc"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1219,13 +1221,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## rawcensustractandblock (type: key)
 
 """
 
-col="rawcensustractandblock"
+col = "rawcensustractandblock"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1239,13 +1241,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## regionidcity (type: str)
 
 """
 
-col="regionidcity"
+col = "regionidcity"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1259,13 +1261,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## regionidcounty (type: str)
 
 """
 
-col="regionidcounty"
+col = "regionidcounty"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1279,13 +1281,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## regionidneighborhood (type: str)
 
 """
 
-col="regionidneighborhood"
+col = "regionidneighborhood"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1299,13 +1301,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## regionidzip (type: str)
 
 """
 
-col="regionidzip"
+col = "regionidzip"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1319,13 +1321,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## roomcnt (type: numeric)
 
 """
 
-col="roomcnt"
+col = "roomcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1363,13 +1365,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## storytypeid (type: str)
 
 """
 
-col="storytypeid"
+col = "storytypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1383,13 +1385,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## threequarterbathnbr (type: numeric)
 
 """
 
-col="threequarterbathnbr"
+col = "threequarterbathnbr"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1427,13 +1429,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## typeconstructiontypeid (type: str)
 
 """
 
-col="typeconstructiontypeid"
+col = "typeconstructiontypeid"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1447,13 +1449,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## unitcnt (type: numeric)
 
 """
 
-col="unitcnt"
+col = "unitcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1491,13 +1493,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## yardbuildingsqft17 (type: numeric)
 
 """
 
-col="yardbuildingsqft17"
+col = "yardbuildingsqft17"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1535,13 +1537,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## yardbuildingsqft26 (type: numeric)
 
 """
 
-col="yardbuildingsqft26"
+col = "yardbuildingsqft26"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1579,13 +1581,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## yearbuilt (type: str)
 
 """
 
-col="yearbuilt"
+col = "yearbuilt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1599,13 +1601,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## numberofstories (type: numeric)
 
 """
 
-col="numberofstories"
+col = "numberofstories"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1643,13 +1645,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## fireplaceflag (type: str)
 
 """
 
-col="fireplaceflag"
+col = "fireplaceflag"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1663,13 +1665,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## structuretaxvaluedollarcnt (type: numeric)
 
 """
 
-col="structuretaxvaluedollarcnt"
+col = "structuretaxvaluedollarcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1707,13 +1709,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## taxvaluedollarcnt (type: numeric)
 
 """
 
-col="taxvaluedollarcnt"
+col = "taxvaluedollarcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1751,13 +1753,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## assessmentyear (type: str)
 
 """
 
-col="assessmentyear"
+col = "assessmentyear"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1771,13 +1773,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## landtaxvaluedollarcnt (type: numeric)
 
 """
 
-col="landtaxvaluedollarcnt"
+col = "landtaxvaluedollarcnt"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1815,13 +1817,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## taxamount (type: numeric)
 
 """
 
-col="taxamount"
+col = "taxamount"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1859,13 +1861,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## taxdelinquencyflag (type: str)
 
 """
 
-col="taxdelinquencyflag"
+col = "taxdelinquencyflag"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1879,13 +1881,13 @@ print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_
 """
 
 value_df[col].value_counts().head(10)
-
 """
 ## taxdelinquencyyear (type: numeric)
 
 """
 
-col="taxdelinquencyyear"
+col = "taxdelinquencyyear"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
@@ -1923,13 +1925,13 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-
 """
 ## censustractandblock (type: key)
 
 """
 
-col="censustractandblock"
+col = "censustractandblock"
+
 value_df = table[[col]].copy()
 nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
 num_uni = value_df[col].dropna().nunique()
