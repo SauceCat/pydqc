@@ -2,6 +2,7 @@ from setuptools import setup
 
 setup(name='pydqc',
 	packages=['pydqc'],
+	package_data={'pydqc': ['templates/*.txt']},
 	version='0.1',
 	description='python automatic data quality check',
 	author='SauceCat',
