@@ -457,7 +457,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 			table['%s_numeric' %(col)] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
 		_n_jobs = np.min([n_jobs, len(date_features)])
-		date_results = Parallel(n_jobs=n_jobs)(delayed(_check_date)('%s_numeric' %(col), 
+		date_results = Parallel(n_jobs=_n_jobs)(delayed(_check_date)('%s_numeric' %(col),
 			table[['%s_numeric' %(col), col]], img_dir) for col in date_features)
 
 		ws = wb.create_sheet(title='date')
