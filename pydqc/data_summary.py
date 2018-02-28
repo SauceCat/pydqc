@@ -413,7 +413,8 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	null_features += [feat for feat in key_features if feat not in table.columns.values]
 	if len(key_features) > 0:
 		# get the check result
-		key_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in key_features)
+		_n_jobs = np.min([n_jobs, len(key_features)])
+		key_results = Parallel(n_jobs=_n_jobs)(delayed(_check_string)(col, table[[col]]) for col in key_features)
 		ws = wb.create_sheet(title='key')
 		# write the final result to work sheet
 		_insert_string_results(key_results, ws, 25)
@@ -425,7 +426,8 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	null_features += [feat for feat in numeric_features if feat not in table.columns.values]
 	if len(numeric_features) > 0:
 		# get the check result
-		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_check_numeric)(col, table[[col]], img_dir)
+		_n_jobs = np.min([n_jobs, len(numeric_features)])
+		numeric_results = Parallel(n_jobs=_n_jobs)(delayed(_check_numeric)(col, table[[col]], img_dir)
 												  for col in numeric_features)
 		ws = wb.create_sheet(title='numeric')
 		# write the final result to work sheet
@@ -437,7 +439,8 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 	string_features = [feat for feat in string_features if feat in table.columns.values]
 	null_features += [feat for feat in string_features if feat not in table.columns.values]
 	if len(string_features) > 0:
-		string_results = Parallel(n_jobs=n_jobs)(delayed(_check_string)(col, table[[col]]) for col in string_features)
+		_n_jobs = np.min([n_jobs, len(string_features)])
+		string_results = Parallel(n_jobs=_n_jobs)(delayed(_check_string)(col, table[[col]]) for col in string_features)
 		ws = wb.create_sheet(title='string')
 		# write the final result to work sheet
 		_insert_string_results(string_results, ws, 25)
@@ -453,6 +456,7 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		for col in date_features:
 			table['%s_numeric' %(col)] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
+		_n_jobs = np.min([n_jobs, len(date_features)])
 		date_results = Parallel(n_jobs=n_jobs)(delayed(_check_date)('%s_numeric' %(col), 
 			table[['%s_numeric' %(col), col]], img_dir) for col in date_features)
 

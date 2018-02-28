@@ -164,7 +164,8 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 			data_dropna_sample_values[col] = data[col].dropna().values
 	
 	# use data_dropna_sample_values to infer data type for each column
-	type_infos = Parallel(n_jobs=n_jobs)(delayed(_infer_dtype)(data_dropna_sample_values[col], col, type_threshold) 
+	_n_jobs = np.min([n_jobs, len(data_dropna_sample_values.columns.values)])
+	type_infos = Parallel(n_jobs=_n_jobs)(delayed(_infer_dtype)(data_dropna_sample_values[col], col, type_threshold)
 		for col in data.columns.values)
 	type_infos_df = pd.DataFrame(type_infos)[['column', 'type']]
 
@@ -174,7 +175,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		data_types[col] = type_infos_df.loc[type_infos_df['column']==col, 'type'].values[0]
 	
 	# get basic statistic information for all columns
-	stat_infos = Parallel(n_jobs=n_jobs)(delayed(_cal_column_stat)
+	stat_infos = Parallel(n_jobs=_n_jobs)(delayed(_cal_column_stat)
 		(data_dropna_sample_values[col], col, data_types[col]) for col in data.columns.values)
 	stat_infos_df = pd.DataFrame(stat_infos)
 	

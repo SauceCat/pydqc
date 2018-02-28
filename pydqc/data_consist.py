@@ -343,7 +343,8 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 	# only check features in both tables
 	key_features = [feat for feat in key_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(key_features) > 0:
-		key_results = Parallel(n_jobs=n_jobs)(delayed(_compare_key)(col, table1[[col]], table2[[col]], img_dir) 
+		_n_jobs = np.min([n_jobs, len(key_features)])
+		key_results = Parallel(n_jobs=_n_jobs)(delayed(_compare_key)(col, table1[[col]], table2[[col]], img_dir)
 			for col in key_features)
 
 		for key_result in key_results:
@@ -359,7 +360,8 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 	# only check features in both tables
 	numeric_features = [feat for feat in numeric_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(numeric_features) > 0:
-		numeric_results = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], 
+		_n_jobs = np.min([n_jobs, len(numeric_features)])
+		numeric_results = Parallel(n_jobs=_n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]],
 			table2[[_key2, col]], _key1, _key2, img_dir) for col in numeric_features)
 
 		for numeric_result in numeric_results:
@@ -375,7 +377,8 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 	# only check features in both tables
 	string_features = [feat for feat in string_features if (feat in table1.columns.values) and (feat in table2.columns.values)]
 	if len(string_features) > 0:
-		string_results = Parallel(n_jobs=n_jobs)(delayed(_consist_string)(col, table1[[_key1, col]], 
+		_n_jobs = np.min([n_jobs, len(string_features)])
+		string_results = Parallel(n_jobs=_n_jobs)(delayed(_consist_string)(col, table1[[_key1, col]],
 			table2[[_key2, col]], _key1, _key2) for col in string_features)
 
 		for string_result in string_results:
@@ -398,7 +401,8 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
 			table2[col] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table2[col], 
 				errors='coerce')).astype('timedelta64[M]', errors='ignore')
-		date_results = Parallel(n_jobs=n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], table2[[_key2, col]], 
+		_n_jobs = np.min([n_jobs, len(date_features)])
+		date_results = Parallel(n_jobs=_n_jobs)(delayed(_consist_numeric)(col, table1[[_key1, col]], table2[[_key2, col]],
 			_key1, _key2, img_dir, date_flag=True) for col in date_features)
 
 		for date_result in date_results:
