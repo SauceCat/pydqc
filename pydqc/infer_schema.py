@@ -164,7 +164,7 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 			data_dropna_sample_values[col] = data[col].dropna().values
 	
 	# use data_dropna_sample_values to infer data type for each column
-	_n_jobs = np.min([n_jobs, len(data_dropna_sample_values.columns.values)])
+	_n_jobs = np.min([n_jobs, len(data.columns.values)])
 	type_infos = Parallel(n_jobs=_n_jobs)(delayed(_infer_dtype)(data_dropna_sample_values[col], col, type_threshold)
 		for col in data.columns.values)
 	type_infos_df = pd.DataFrame(type_infos)[['column', 'type']]
@@ -225,6 +225,12 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 	red_font = Font(color="9C0006")
 	green_fill = PatternFill(bgColor="C6EFCE")
 	green_font = Font(color="006100")
+	blue_fill = PatternFill(bgColor="9ECAE1")
+	blue_font = Font(color="08306B")
+	orange_fill = PatternFill(bgColor="FDD0A2")
+	orange_font = Font(color="A63603")
+	purple_fill = PatternFill(bgColor="DADAEB")
+	purple_font = Font(color="3F007D")
 
 	# red highlight if there is any inconsistent between base and the target
 	if base_schema is not None:
@@ -259,6 +265,12 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 									  FormulaRule(formula=['%s2="error"' %(col)], stopIfTrue=True, fill=red_fill, font=red_font))
 		ws.conditional_formatting.add('%s2:%s%d' %(col, col, ws.max_row), 
 									  FormulaRule(formula=['%s2="key"' %(col)], stopIfTrue=True, fill=green_fill, font=green_font))
+		ws.conditional_formatting.add('%s2:%s%d' % (col, col, ws.max_row),
+									  FormulaRule(formula=['%s2="numeric"' % (col)], stopIfTrue=True, fill=blue_fill, font=blue_font))
+		ws.conditional_formatting.add('%s2:%s%d' % (col, col, ws.max_row),
+									  FormulaRule(formula=['%s2="str"' % (col)], stopIfTrue=True, fill=orange_fill, font=orange_font))
+		ws.conditional_formatting.add('%s2:%s%d' % (col, col, ws.max_row),
+									  FormulaRule(formula=['%s2="date"' % (col)], stopIfTrue=True, fill=purple_fill, font=purple_font))
 
 	# red highlight for sample_num_uni = 0 or 1, only one unique value
 	ws.conditional_formatting.add('%s2:%s%d' %(column_mapping['sample_num_uni'], column_mapping['sample_num_uni'], ws.max_row), 
