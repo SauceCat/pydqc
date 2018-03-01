@@ -325,14 +325,14 @@ def _insert_string_results(string_results, ws, row_height):
 			databar_head = _insert_df(value_counts_df, ws, header=True, head_style='60 % - Accent5')
 
 			# add conditional formatting: data bar
-			first = FormatObject(type='min')
-			second = FormatObject(type='max')
+			first = FormatObject(type='num', val=0)
+			second = FormatObject(type='num', val=value_counts_df['count'].max())
 			data_bar = DataBar(cfvo=[first, second], color=DIS_LINE.replace('#', ''),
 							   showValue=True, minLength=None, maxLength=None)
 
 			# assign the data bar to a rule
-			rule = Rule(type='dataBar', dataBar=data_bar)
-			ws.conditional_formatting.add('B%d:B%d' %(databar_head, databar_head+len(value_counts_df)), rule)
+			rule = Rule(type='dataBar', dataBar=data_bar, )
+			ws.conditional_formatting.add('B%d:B%d' %(databar_head+1, databar_head+len(value_counts_df)), rule)
 
 			# draw the thick outline border
 			_style_range(ws, 'A%d:B%d'%(head_row, databar_head+len(value_counts_df)), border=border)

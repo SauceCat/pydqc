@@ -601,16 +601,16 @@ def _insert_compare_string_results(string_results, ws, row_height):
 				row_heights[row_idx] = 25
 
 			# add conditional formatting: data bar
-			first = FormatObject(type='min')
-			second = FormatObject(type='max')
+			first = FormatObject(type='num', val=0)
+			second = FormatObject(type='num', val=np.max([value_counts_df['count_1'].max(), value_counts_df['count_2'].max()]))
 			data_bar1 = DataBar(cfvo=[first, second], color=TABLE1_DARK.replace('#', ''), showValue=True, minLength=None, maxLength=None)
 			data_bar2 = DataBar(cfvo=[first, second], color=TABLE2_DARK.replace('#', ''), showValue=True, minLength=None, maxLength=None)
 
 			# assign the data bar to a rule
 			rule1 = Rule(type='dataBar', dataBar=data_bar1)
-			ws.conditional_formatting.add('B%d:B%d' %(databar_head, databar_head+len(value_counts_df)), rule1)
+			ws.conditional_formatting.add('B%d:B%d' %(databar_head+1, databar_head+len(value_counts_df)), rule1)
 			rule2 = Rule(type='dataBar', dataBar=data_bar2)
-			ws.conditional_formatting.add('C%d:C%d' %(databar_head, databar_head+len(value_counts_df)), rule2)
+			ws.conditional_formatting.add('C%d:C%d' %(databar_head+1, databar_head+len(value_counts_df)), rule2)
 
 			# draw the thick outline border
 			_style_range(ws, 'A%d:C%d'%(head_row, databar_head+len(value_counts_df)), border=border)
