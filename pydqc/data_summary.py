@@ -331,7 +331,7 @@ def _insert_string_results(string_results, ws, row_height):
 							   showValue=True, minLength=None, maxLength=None)
 
 			# assign the data bar to a rule
-			rule = Rule(type='dataBar', dataBar=data_bar, )
+			rule = Rule(type='dataBar', dataBar=data_bar)
 			ws.conditional_formatting.add('B%d:B%d' %(databar_head+1, databar_head+len(value_counts_df)), rule)
 
 			# draw the thick outline border
