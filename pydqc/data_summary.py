@@ -248,8 +248,9 @@ def _check_string(col, _value_df):
 		sample_value = np.random.choice(value_dropna, 1)[0]
 
 		# get the top 10 value counts
-		value_counts_df = pd.DataFrame(pd.Series(value_dropna).value_counts(), columns=['count'])
+		value_counts_df = pd.DataFrame(pd.Series(value_df[col].values).value_counts(dropna=False), columns=['count'])
 		value_counts_df[col] = value_counts_df.index.values
+		value_counts_df[col] = value_counts_df[col].map(str)
 		value_counts_df = value_counts_df.sort_values(by='count', ascending=False).head(10)[[col, 'count']]
 
 		output = [

@@ -440,8 +440,9 @@ def _value_counts_df(values):
 	-------
 	value counts dataframe
 	"""
-	temp = pd.DataFrame(pd.Series(values).value_counts(), columns=['count'])
+	temp = pd.DataFrame(pd.Series(values).value_counts(dropna=False), columns=['count'])
 	temp['value'] = temp.index.values
+	temp['value'] = temp['value'].map(str)
 	return temp.reset_index(drop=True)
 
 
@@ -498,13 +499,9 @@ def _compare_string(col, _df1, _df2):
 		{'feature': 'only in table2', 'value': col_only_df2},
 	]
 
-	# get clean data for ploting the graph
-	df1_sample_dropna_values = df1_sample[col].dropna().values
-	df2_sample_dropna_values = df2_sample[col].dropna().values
-
 	# draw the count graph
-	value_counts_df1 = _value_counts_df(df1_sample_dropna_values)
-	value_counts_df2 = _value_counts_df(df2_sample_dropna_values)
+	value_counts_df1 = _value_counts_df(df1_sample[col].values)
+	value_counts_df2 = _value_counts_df(df2_sample[col].values)
 
 	value_counts_df1_top10 = value_counts_df1.sort_values('count', ascending=False).head(10)
 	value_counts_df2_top10 = value_counts_df2.sort_values('count', ascending=False).head(10)
