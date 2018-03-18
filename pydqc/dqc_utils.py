@@ -267,9 +267,14 @@ def _insert_numeric_results(numeric_results, ws, row_height, img_dir, date_flag=
 		# insert graph
 		try:
 			if date_flag:
-				img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %('%s_numeric' %(column))))
+				graph_name = '%s_numeric' %(column)
 			else:
-				img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(column)))
+				graph_name = column
+
+			if ('/' in graph_name) or ('\\' in graph_name):
+				graph_name = '(%s)' % (graph_name)
+
+			img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(graph_name)))
 			ws.add_image(img, 'C%d' %(head_row+1))
 		except:
 			continue

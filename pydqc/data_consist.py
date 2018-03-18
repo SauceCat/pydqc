@@ -196,7 +196,11 @@ def _consist_numeric(col, _df1, _df2, _key1, _key2, img_dir, date_flag=False):
 		plt.title('Distribution of differences')
 
 	# save the graphs
-	plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
+	# adjust graph name
+	graph_name = col
+	if ('/' in graph_name) or ('\\' in graph_name):
+		graph_name = '(%s)' % (graph_name)
+	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 	return {'column': col, 'result_df': pd.DataFrame(output), 'corr': {'column': col, 'corr': corr}}
 
 

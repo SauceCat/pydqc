@@ -194,7 +194,11 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 							mark=1, y_low=y_low, y_up=y_up)
 
 		# save the graphs
-		plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
+		# adjust graph name
+		graph_name = col
+		if ('/' in graph_name) or ('\\' in graph_name):
+			graph_name = '(%s)' %(graph_name)
+		plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 		output = [
 			{'feature': 'column', 'value': col, 'graph': 'Distribution'},

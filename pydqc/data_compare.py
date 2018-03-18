@@ -272,7 +272,11 @@ def _compare_key(key, _df1, _df2, img_dir):
 	venn2([set_df1_key, set_df2_key], set_labels=['table1', 'table2'], set_colors=(TABLE1_DARK, TABLE2_DARK), alpha=0.8)
 
 	# save the graphs
-	plt.savefig(os.path.join(img_dir, key + '.png'), transparent=True)
+	# adjust graph name
+	graph_name = key
+	if ('/' in graph_name) or ('\\' in graph_name):
+		graph_name = '(%s)' % (graph_name)
+	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 	return {'column': key, 'result_df': pd.DataFrame(output), 'corr': {'column': key, 'corr': round(overlap_rate, 3)}}
 
@@ -417,7 +421,11 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 						draw_value_4=df2_draw_value_4, mark=2, y_low=y_low, y_up=y_up)
 			
 	# save the graphs
-	plt.savefig(os.path.join(img_dir, col + '.png'), transparent=True)
+	# adjust graph name
+	graph_name = col
+	if ('/' in graph_name) or ('\\' in graph_name):
+		graph_name = '(%s)' % (graph_name)
+	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 	if date_flag:
 		output.append({'feature': 'date_min', 'value': '%s\n%s' %(date_min1, date_min2)})
