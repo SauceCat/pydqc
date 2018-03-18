@@ -300,6 +300,51 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 		the number of jobs to run in parallel
 	"""
 
+	# check whether keys are valid
+	if _key1 not in _table1.columns.values:
+		raise ValueError('_key1: does not exist in table1')
+	if _key2 not in _table2.columns.values:
+		raise ValueError('_key2: does not exist in table2')
+
+	# check whether two tables are unique in key level
+	if (_table1[_key1].nunique() != _table1.shape[0]):
+		raise ValueError('_table1: should be unique in %s level' % (_key1))
+	if (_table2[_key2].nunique() != _table2.shape[0]):
+		raise ValueError('_table2: should be unique in %s level' % (_key2))
+
+	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
+	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
+	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
+	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
+
+	# check sample_size
+	if sample_size > 1:
+		if int(sample_size) != sample_size:
+			raise ValueError('sample_size: only accept integer when it is > 1.0')
+		if (sample_size > _table1.shape[0]) or (sample_size > _table2.shape[0]):
+			print('sample_size: %d is smaller than %d or %d...' % (sample_size, _table1.shape[0], _table2.shape[0]))
+
+	# check feature_colname1 and feature_colname2
+	if feature_colname1 not in _schema1.columns.values:
+		raise ValueError('feature_colname1: column not in _schema1')
+
+	if feature_colname2 not in _schema2.columns.values:
+		raise ValueError('feature_colname2: column not in _schema2')
+
+	# check dtype_colname1 and dtype_colname2
+	if dtype_colname1 not in _schema1.columns.values:
+		raise ValueError('dtype_colname1: column not in _schema1')
+
+	if dtype_colname2 not in _schema2.columns.values:
+		raise ValueError('dtype_colname2: column not in _schema2')
+
+	# check output_root
+	if output_root != '':
+		if not os.path.isdir(output_root):
+			raise ValueError('output_root: root not exists')
+
 	# create a new workbook to store everything
 	wb = openpyxl.Workbook()
 
@@ -477,6 +522,44 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 	output_root: string, default=''
 		the root directory for the output file
 	"""
+
+	# check whether keys are valid
+	if _key1 not in _table1.columns.values:
+		raise ValueError('_key1: does not exist in table1')
+	if _key2 not in _table2.columns.values:
+		raise ValueError('_key2: does not exist in table2')
+
+	# check whether two tables are unique in key level
+	if (_table1[_key1].nunique() != _table1.shape[0]):
+		raise ValueError('_table1: should be unique in %s level' % (_key1))
+	if (_table2[_key2].nunique() != _table2.shape[0]):
+		raise ValueError('_table2: should be unique in %s level' % (_key2))
+
+	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
+	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
+	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
+	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
+
+	# check feature_colname1 and feature_colname2
+	if feature_colname1 not in _schema1.columns.values:
+		raise ValueError('feature_colname1: column not in _schema1')
+
+	if feature_colname2 not in _schema2.columns.values:
+		raise ValueError('feature_colname2: column not in _schema2')
+
+	# check dtype_colname1 and dtype_colname2
+	if dtype_colname1 not in _schema1.columns.values:
+		raise ValueError('dtype_colname1: column not in _schema1')
+
+	if dtype_colname2 not in _schema2.columns.values:
+		raise ValueError('dtype_colname2: column not in _schema2')
+
+	# check output_root
+	if output_root != '':
+		if not os.path.isdir(output_root):
+			raise ValueError('output_root: root not exists')
 
 	# generate output file path 
 	output_path = os.path.join(output_root, 'data_consist_notebook_%s.py' %(fname))

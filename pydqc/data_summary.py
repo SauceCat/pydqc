@@ -380,6 +380,31 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		the number of jobs to run in parall
 	"""
 
+	# check table_schema
+	schema_dtypes = np.unique(table_schema[dtype_colname].values)
+	if not set(schema_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("table_schema: data types should be one of ['key', 'date', 'str', 'numeric']")
+
+	# check sample_size
+	if sample_size > 1:
+		if int(sample_size) != sample_size:
+			raise ValueError('sample_size: only accept integer when it is > 1.0')
+		if sample_size > _table.shape[0]:
+			print("sample_size: %d is larger than the data size: %d" % (sample_size, _table.shape[0]))
+
+	# check feature_colname
+	if feature_colname not in table_schema.columns.values:
+		raise ValueError('feature_colname: column not in schema')
+
+	# check dtype_colname
+	if dtype_colname not in table_schema.columns.values:
+		raise ValueError('dtype_colname: column not in schema')
+
+	# check output_root
+	if output_root != '':
+		if not os.path.isdir(output_root):
+			raise ValueError('output_root: root not exists')
+
 	# make a copy of the raw table
 	table = _table.copy()
 
@@ -517,6 +542,24 @@ def data_summary_notebook(table_schema, _table, fname, feature_colname='column',
 	output_root: string, default=''
 		the root directory for the output file
 	"""
+
+	# check table_schema
+	schema_dtypes = np.unique(table_schema[dtype_colname].values)
+	if not set(schema_dtypes) <= set(['key', 'date', 'str', 'numeric']):
+		raise ValueError("table_schema: data types should be one of ['key', 'date', 'str', 'numeric']")
+
+	# check feature_colname
+	if feature_colname not in table_schema.columns.values:
+		raise ValueError('feature_colname: column not in schema')
+
+	# check dtype_colname
+	if dtype_colname not in table_schema.columns.values:
+		raise ValueError('dtype_colname: column not in schema')
+
+	# check output_root
+	if output_root != '':
+		if not os.path.isdir(output_root):
+			raise ValueError('output_root: root not exists')
 
 	# generate output file path 
 	output_path = os.path.join(output_root, 'data_summary_notebook_%s.py' %(fname))

@@ -142,6 +142,31 @@ def infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0
 		dtype_colname in base schema
 	"""
 
+	# check sample_size
+	if sample_size > 1:
+		if int(sample_size) != sample_size:
+			raise ValueError('sample_size: only accept integer when it is > 1.0')
+		if sample_size > _data.shape[0]:
+			print("sample_size: %d is larger than the data size: %d" % (sample_size, _data.shape[0]))
+
+	# check output_root
+	if output_root != '':
+		if not os.path.isdir(output_root):
+			raise ValueError('output_root: root not exists')
+
+	# check type_threshold
+	if (type_threshold <= 0) or (type_threshold > 1):
+		raise ValueError('type_threshold: should be in (0, 1]')
+
+	# check base_schema
+	if base_schema is not None:
+		if type(base_schema) != pd.core.frame.DataFrame:
+			raise ValueError('base_schema: only accept pandas DataFrame')
+		if base_schema_feature_colname not in base_schema.columns.values:
+			raise ValueError('base_schema_feature_colname: column not in base schema')
+		if base_schema_dtype_colname not in base_schema.columns.values:
+			raise ValueError('base_schema_dtype_colname: column not in base schema')
+
 	# copy raw data table
 	data = _data.copy()
 
