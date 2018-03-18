@@ -196,8 +196,8 @@ def _check_numeric(col, _value_df, img_dir, date_flag=False):
 		# save the graphs
 		# adjust graph name
 		graph_name = col
-		if ('/' in graph_name) or ('\\' in graph_name):
-			graph_name = '(%s)' %(graph_name)
+		if '/' in graph_name:
+			graph_name = graph_name.replace('/', '')
 		plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 		output = [
@@ -380,11 +380,6 @@ def data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='
 		the number of jobs to run in parall
 	"""
 
-	# check table_schema
-	schema_dtypes = np.unique(table_schema[dtype_colname].values)
-	if not set(schema_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("table_schema: data types should be one of ['key', 'date', 'str', 'numeric']")
-
 	# check sample_size
 	if sample_size > 1:
 		if int(sample_size) != sample_size:
@@ -542,11 +537,6 @@ def data_summary_notebook(table_schema, _table, fname, feature_colname='column',
 	output_root: string, default=''
 		the root directory for the output file
 	"""
-
-	# check table_schema
-	schema_dtypes = np.unique(table_schema[dtype_colname].values)
-	if not set(schema_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("table_schema: data types should be one of ['key', 'date', 'str', 'numeric']")
 
 	# check feature_colname
 	if feature_colname not in table_schema.columns.values:

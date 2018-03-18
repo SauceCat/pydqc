@@ -271,8 +271,8 @@ def _insert_numeric_results(numeric_results, ws, row_height, img_dir, date_flag=
 			else:
 				graph_name = column
 
-			if ('/' in graph_name) or ('\\' in graph_name):
-				graph_name = '(%s)' % (graph_name)
+			if '/' in graph_name:
+				graph_name = graph_name.replace('/', '')
 
 			img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(graph_name)))
 			ws.add_image(img, 'C%d' %(head_row+1))

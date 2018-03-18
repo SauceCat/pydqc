@@ -198,8 +198,8 @@ def _consist_numeric(col, _df1, _df2, _key1, _key2, img_dir, date_flag=False):
 	# save the graphs
 	# adjust graph name
 	graph_name = col
-	if ('/' in graph_name) or ('\\' in graph_name):
-		graph_name = '(%s)' % (graph_name)
+	if '/' in graph_name:
+		graph_name = graph_name.replace('/', '')
 	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 	return {'column': col, 'result_df': pd.DataFrame(output), 'corr': {'column': col, 'corr': corr}}
 
@@ -311,13 +311,6 @@ def data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, samp
 		raise ValueError('_table1: should be unique in %s level' % (_key1))
 	if (_table2[_key2].nunique() != _table2.shape[0]):
 		raise ValueError('_table2: should be unique in %s level' % (_key2))
-
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
 
 	# check sample_size
 	if sample_size > 1:
@@ -534,13 +527,6 @@ def data_consist_notebook(_table1, _table2, _key1, _key2, _schema1, _schema2, fn
 		raise ValueError('_table1: should be unique in %s level' % (_key1))
 	if (_table2[_key2].nunique() != _table2.shape[0]):
 		raise ValueError('_table2: should be unique in %s level' % (_key2))
-
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
 
 	# check feature_colname1 and feature_colname2
 	if feature_colname1 not in _schema1.columns.values:

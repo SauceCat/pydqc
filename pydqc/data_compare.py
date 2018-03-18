@@ -274,8 +274,8 @@ def _compare_key(key, _df1, _df2, img_dir):
 	# save the graphs
 	# adjust graph name
 	graph_name = key
-	if ('/' in graph_name) or ('\\' in graph_name):
-		graph_name = '(%s)' % (graph_name)
+	if '/' in graph_name:
+		graph_name = graph_name.replace('/', '')
 	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 	return {'column': key, 'result_df': pd.DataFrame(output), 'corr': {'column': key, 'corr': round(overlap_rate, 3)}}
@@ -423,8 +423,8 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
 	# save the graphs
 	# adjust graph name
 	graph_name = col
-	if ('/' in graph_name) or ('\\' in graph_name):
-		graph_name = '(%s)' % (graph_name)
+	if '/' in graph_name:
+		graph_name = graph_name.replace('/', '')
 	plt.savefig(os.path.join(img_dir, graph_name + '.png'), transparent=True)
 
 	if date_flag:
@@ -664,13 +664,6 @@ def data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, f
 		the number of jobs to run in parallel
 	"""
 
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
-
 	# check sample_size
 	if sample_size > 1:
 		if int(sample_size) != sample_size:
@@ -874,13 +867,6 @@ def data_compare_notebook(_table1, _table2, _schema1, _schema2, fname, feature_c
 	output_root: string, default=''
 		the root directory for the output file
 	"""
-
-	schema1_dtypes = np.unique(_schema1[dtype_colname1].values)
-	if not set(schema1_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema1: data types should be one of ['key', 'date', 'str', 'numeric']")
-	schema2_dtypes = np.unique(_schema2[dtype_colname2].values)
-	if not set(schema2_dtypes) <= set(['key', 'date', 'str', 'numeric']):
-		raise ValueError("_schema2: data types should be one of ['key', 'date', 'str', 'numeric']")
 
 	# check feature_colname1 and feature_colname2
 	if feature_colname1 not in _schema1.columns.values:
