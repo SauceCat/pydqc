@@ -44,9 +44,9 @@ TABLE2_LIGHT = "#FDE9D9"
 snapshot_date_now = str(datetime.datetime.now().date())
 print("date of today: " + snapshot_date_now)
 """
-### columns are consistent between table1 and table2!
+## error columns
 
-"""
+**decktypeid:** exclude<br>**hashottuborspa:** exclude<br>**poolcnt:** exclude<br>**pooltypeid10:** exclude<br>**pooltypeid2:** exclude<br>**pooltypeid7:** exclude<br>**storytypeid:** exclude<br>**fireplaceflag:** exclude<br>**taxdelinquencyflag:** exclude<br>"""
 
 
 """
@@ -387,30 +387,6 @@ plt.title("Distribution of differences")
 
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
-"""
-## decktypeid (type: str)
-
-"""
-
-col = "decktypeid"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
 """
 ## finishedfloor1squarefeet (type: numeric)
 
@@ -1008,30 +984,6 @@ plt.title("Distribution of differences")
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
 """
-## hashottuborspa (type: str)
-
-"""
-
-col = "hashottuborspa"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
-"""
 ## heatingorsystemtypeid (type: str)
 
 """
@@ -1212,58 +1164,6 @@ plt.title("Distribution of differences")
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
 """
-## poolcnt (type: numeric)
-
-"""
-
-col = "poolcnt"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-df = df.dropna(how='any', subset=[col + "_x", col + "_y"]).reset_index(drop=True)
-
-corr = round(spearmanr(df[col + "_x"].values, df[col + "_y"].values)[0], 3)
-print("consistency rate: " + str(corr))
-
-"""
-#### draw consistency graph
-
-"""
-
-# prepare data
-df["diff_temp"] = df[col + "_y"] - df[col + "_x"]
-draw_values = df["diff_temp"].dropna().values
-
-both_min = np.min([df[col + "_x"].min(), df[col + "_y"].min()])
-both_max = np.max([df[col + "_x"].max(), df[col + "_y"].max()])
-
-# draw
-plt.figure(figsize=(12, 6))
-plt.subplot(121)
-plt.scatter(df[col + "_x"].values, df[col + "_y"].values, c=TABLE1_DARK, s=5)
-plt.plot([both_min, both_max], [both_min, both_max], "--", c="#bbbbbb")
-plt.xlim(both_min, both_max)
-plt.ylim(both_min, both_max)
-plt.title("corr: %.3f" %(corr))
-
-plt.subplot(122)
-sns.distplot(draw_values, color=TABLE2_DARK)
-plt.title("Distribution of differences")
-
-"""
-"""
-
-#you can also use the build-in draw function
-numeric_consist_pretty(df1, df2, key1, key2, col)
-"""
 ## poolsizesum (type: numeric)
 
 """
@@ -1315,78 +1215,6 @@ plt.title("Distribution of differences")
 
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
-"""
-## pooltypeid10 (type: str)
-
-"""
-
-col = "pooltypeid10"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
-"""
-## pooltypeid2 (type: str)
-
-"""
-
-col = "pooltypeid2"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
-"""
-## pooltypeid7 (type: str)
-
-"""
-
-col = "pooltypeid7"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
 """
 ## propertycountylandusecode (type: str)
 
@@ -1641,30 +1469,6 @@ plt.title("Distribution of differences")
 
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
-"""
-## storytypeid (type: str)
-
-"""
-
-col = "storytypeid"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
 """
 ## threequarterbathnbr (type: numeric)
 
@@ -1974,30 +1778,6 @@ plt.title("Distribution of differences")
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
 """
-## fireplaceflag (type: str)
-
-"""
-
-col = "fireplaceflag"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
-"""
 ## structuretaxvaluedollarcnt (type: numeric)
 
 """
@@ -2229,30 +2009,6 @@ plt.title("Distribution of differences")
 
 #you can also use the build-in draw function
 numeric_consist_pretty(df1, df2, key1, key2, col)
-"""
-## taxdelinquencyflag (type: str)
-
-"""
-
-col = "taxdelinquencyflag"
-
-df1 = table1[[key1, col]].copy()
-df2 = table2[[key2, col]].copy()
-
-"""
-#### check pairwise consistency
-
-"""
-
-# merge 2 tables
-df = df1.merge(df2, left_on=key1, right_on=key2, how="inner")
-
-# calculate consistency
-df['diff_temp'] = df.apply(lambda x: "Same" if x['%s_x' %(col)] == x['%s_y' %(col)] else "Diff", axis=1)
-df['diff_temp'] = df.apply(lambda x: "Same" if (str(x['%s_x' % (col)]) == 'nan' and str(x['%s_y' % (col)]) == 'nan') else x['diff_temp'], axis=1)
-
-corr = df[df["diff_temp"] == "Same"].shape[0] * 1.0 / df.shape[0]
-print("consistency rate: " + str(corr))
 """
 ## taxdelinquencyyear (type: numeric)
 

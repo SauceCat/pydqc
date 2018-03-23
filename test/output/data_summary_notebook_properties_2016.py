@@ -36,8 +36,9 @@ DIS_LINE = "#F79646"
 snapshot_date_now = str(datetime.datetime.now().date())
 print("date of today: " + snapshot_date_now)
 """
-### columns are consistent between table_schema and table! 
+## excluded columns
 
+decktypeid, hashottuborspa, poolcnt, pooltypeid10, pooltypeid2, pooltypeid7, storytypeid, fireplaceflag, taxdelinquencyflag
 """
 
 
@@ -317,26 +318,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-"""
-## decktypeid (type: str)
-
-"""
-
-col = "decktypeid"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
 """
 ## finishedfloor1squarefeet (type: numeric)
 
@@ -842,26 +823,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
 """
-## hashottuborspa (type: str)
-
-"""
-
-col = "hashottuborspa"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
-"""
 ## heatingorsystemtypeid (type: str)
 
 """
@@ -1014,50 +975,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
 """
-## poolcnt (type: numeric)
-
-"""
-
-col = "poolcnt"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check basic stats
-
-"""
-
-value_min=value_df[col].min()
-value_mean=value_df[col].mean()
-value_median=value_df[col].median()
-value_max=value_df[col].max()
-
-print("min: " + str(value_min))
-print("mean: " + str(value_mean))
-print("median: " + str(value_median))
-print("max: " + str(value_max))
-
-"""
-#### check distribution
-
-"""
-
-value_dropna = value_df[col].dropna().values
-plt.figure(figsize=(10, 5))
-plt.title(col)
-sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
-
-"""
-"""
-
-#you can also use the build-in draw function
-distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-"""
 ## poolsizesum (type: numeric)
 
 """
@@ -1101,66 +1018,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-"""
-## pooltypeid10 (type: str)
-
-"""
-
-col = "pooltypeid10"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
-"""
-## pooltypeid2 (type: str)
-
-"""
-
-col = "pooltypeid2"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
-"""
-## pooltypeid7 (type: str)
-
-"""
-
-col = "pooltypeid7"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
 """
 ## propertycountylandusecode (type: str)
 
@@ -1365,26 +1222,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-"""
-## storytypeid (type: str)
-
-"""
-
-col = "storytypeid"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
 """
 ## threequarterbathnbr (type: numeric)
 
@@ -1646,26 +1483,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
 """
-## fireplaceflag (type: str)
-
-"""
-
-col = "fireplaceflag"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
-"""
 ## structuretaxvaluedollarcnt (type: numeric)
 
 """
@@ -1861,26 +1678,6 @@ sns.distplot(value_dropna, color="#F79646", norm_hist=True, hist=False)
 
 #you can also use the build-in draw function
 distribution_summary_pretty(value_df, col, figsize=None, date_flag=False)
-"""
-## taxdelinquencyflag (type: str)
-
-"""
-
-col = "taxdelinquencyflag"
-
-value_df = table[[col]].copy()
-nan_rate = value_df[value_df[col].isnull()].shape[0] * 1.0 / value_df.shape[0]
-num_uni = value_df[col].dropna().nunique()
-
-print("nan_rate: " + str(nan_rate))
-print("num_uni out of " + str(value_df[col].dropna().shape[0]) + ": " + str(num_uni))
-
-"""
-#### check value counts
-
-"""
-
-value_df[col].value_counts().head(10)
 """
 ## taxdelinquencyyear (type: numeric)
 
