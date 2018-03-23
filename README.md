@@ -34,7 +34,8 @@ For an input data table (pandas dataframe):
     - **'str'**: categorical column
     - **'date'**: datetime column
     - **'numeric'**: numeric column  
-  After inferring, an excel file named 'data_schema_XXX.xlsx' (XXX here represents the 'fname' parameter) is generated. We should check the generated file and modify the 'type' column when it is necessary (when the infer_schema function makes some mistakes). But it is easy because we can do the modification by selecting from a drop down list.  
+After inferring, an excel file named 'data_schema_XXX.xlsx' (XXX here represents the 'fname' parameter) is generated. We should check the generated file and modify the 'type' column when it is necessary (when the infer_schema function makes some mistakes). But it is easy because we can do the modification by selecting from a drop down list.  
+You can also modify the 'include' column to exclude some features for further checking.  
       <img src="https://github.com/SauceCat/pydqc/blob/master/images/infer_schema_drop_down_list.png" width="60%">   
   
   ***For this version, pydqc is not able to infer the 'key' type, so it always needs human modification.***  
