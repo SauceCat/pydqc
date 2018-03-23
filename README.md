@@ -28,7 +28,7 @@ python setup.py install
 
 For an input data table (pandas dataframe): 
 ### Step 1: data schema
-- **function: pydqc.infer_schema.infer_schema(_data, fname, output_root='', sample_size=1.0, type_threshold=0.5, n_jobs=1, base_schema=None, base_schema_feature_colname='column', base_schema_dtype_colname='type')**  
+- **function: pydqc.infer_schema.infer_schema(data, fname, output_root='', sample_size=1.0, type_threshold=0.5, n_jobs=1, base_schema=None)**  
   Infer data types for each column. pydqc recognizes four basic data types, including 'key', 'str', 'date', 'numeric'.  
     - **'key'**: column that doesn't have concrete meaning itself, but acts as 'key' to link with other tables.  
     - **'str'**: categorical column
@@ -42,7 +42,7 @@ For an input data table (pandas dataframe):
   - example output for infer_schema: [raw schema](https://github.com/SauceCat/pydqc/blob/master/test/output/data_schema_properties_2016.xlsx), [modified schema](https://github.com/SauceCat/pydqc/blob/master/test/output/data_schema_properties_2016_mdf.xlsx)
   
 ### Step 2 (option 1): data summary  
-- **function: pydqc.data_summary.data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='column', dtype_colname='type', output_root='', n_jobs=1)**   
+- **function: pydqc.data_summary.data_summary(table_schema, table, fname, sample_size=1.0, output_root='', n_jobs=1)**   
   Summary basic statistical information for each column based on the provided data type.  
     - **'key' and 'str'**: sample value, rate of nan values, number of unique values, top 10 value count.  
     **example output:**  
@@ -64,7 +64,7 @@ For an input data table (pandas dataframe):
   - example output for data summary notebook: [data summary notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_summary_notebook_properties_2016.ipynb)  
       
 ### Step 2 (option 2): data compare 
-- **function: data_compare(_table1, _table2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', n_jobs=1)**   
+- **function: data_compare(table1, table2, schema1, schema2, fname, sample_size=1.0, output_root='', n_jobs=1)**   
   Compare statistical characteristics of the same columns between two different tables based on the provided data type. (It might be useful when we want to compare training set with test set, or sample table from two different snapshot dates)  
     - **'key'**: compare sample value, rate of nan values, number of unique values, size of intersection set, size of set only in table1, size of set only in table2, venn graph.  
     **example output:**   
@@ -94,8 +94,7 @@ For an input data table (pandas dataframe):
   - example output for data compare notebook: [data compare notebook](https://github.com/SauceCat/pydqc/blob/master/test/output/data_compare_notebook_properties_2016.ipynb)  
   
 ### Step 2 (option 3): data consist 
-- **function: data_consist(_table1, _table2, _key1, _key2, _schema1, _schema2, fname, sample_size=1.0, feature_colname1='column', 
-	feature_colname2='column', dtype_colname1='type', dtype_colname2='type', output_root='', keep_images=False, n_jobs=1)**   
+- **function: data_consist(table1, table2, key1, key2, schema1, schema2, fname, sample_size=1.0, output_root='', keep_images=False, n_jobs=1)**   
   Check consistency of the same columns between two different tables by merging tables on the provided keys. (It might be useful when we want to compare training set with test set, or sample table from two different snapshot dates)  
     - **'key'**: same as data_compare for key type  
       
