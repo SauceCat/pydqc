@@ -648,9 +648,9 @@ def _check_features(schema1, schema2):
     """
 
     # select useful columns in schema
-    schema1 = schema1[['column', 'type', 'include']].rename(
+    schema1 = schema1[schema1['column'] != 'column not in current table'][['column', 'type', 'include']].rename(
         columns={'column': 'column_1', 'type': 'type_1', 'include': 'include_1'})
-    schema2 = schema2[['column', 'type', 'include']].rename(
+    schema2 = schema2[schema2['column'] != 'column not in current table'][['column', 'type', 'include']].rename(
         columns={'column': 'column_2', 'type': 'type_2', 'include': 'include_2'})
 
     # merge two schemas
