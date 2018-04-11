@@ -163,7 +163,7 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
 
     for i, col in enumerate(range(ws.max_column)):
         col_name = xlsxwriter.utility.xl_col_to_name(i)
-        ws.column_dimensions[col_name].width = np.min([np.max([15, col_widths[col_name]]), 100])
+        ws.column_dimensions[col_name].width = np.min([np.max([15, col_widths[col_name]]), 80])
 
     if adjust_type == 'str':
         ws.column_dimensions['C'].width = col_widths['B']
