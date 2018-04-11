@@ -381,7 +381,7 @@ def _check_features(table_schema):
     return exclude_features, check_features
 
 
-def data_summary(table_schema, table, fname, sample_size=1.0, output_root='', keep_images=False, n_jobs=1):
+def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, output_root='', keep_images=False, n_jobs=1):
     """
     Summarize basic information of all columns in a data table
     based on the provided data schema
@@ -397,6 +397,8 @@ def data_summary(table_schema, table, fname, sample_size=1.0, output_root='', ke
     sample_size: integer or float(<=1.0), default=1.0
         int: number of sample rows to do the summary (useful for large tables)
         float: sample size in percentage
+    sample_rows: integer
+        number of rows to get data samples
     output_root: string
         the root directory for the output file
     keep_images: boolean
@@ -416,6 +418,9 @@ def data_summary(table_schema, table, fname, sample_size=1.0, output_root='', ke
     if output_root != '':
         if not os.path.isdir(output_root):
             raise ValueError('output_root: root not exists')
+
+    # get data samples before sample_size
+    data_sample = table.sample(sample_rows).reset_index(drop=True)
 
     # calculate the sample size
     if sample_size <= 1.0:
@@ -497,6 +502,11 @@ def data_summary(table_schema, table, fname, sample_size=1.0, output_root='', ke
             ws['C%d' %(idx+2)].style = 'Bad'
 
     _adjust_ws(ws=ws, row_height=25)
+
+
+    # write data samples
+    ws = wb.create_sheet(title=u'sample')
+    _ = _insert_df(data_sample, ws, header=True, head_color=False)
 
     wb.save(filename=os.path.join(output_root, 'data_summary_%s.xlsx' %(fname)))
 
