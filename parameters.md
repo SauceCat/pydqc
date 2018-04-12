@@ -46,7 +46,7 @@ infer_schema.infer_schema(_data=data_2017, fname='properties_2017_sample', outpu
 ```
 -------------------------------------------------------------------------------------------------------
   
-#### pydqc.data_summary.data_summary(table_schema, _table, fname, sample_size=1.0, feature_colname='column', dtype_colname='type', output_root='', n_jobs=1)
+#### pydqc.data_summary.data_summary(table_schema, _table, fname, sample_size=1.0, sample_rows=100, feature_colname='column', dtype_colname='type', output_root='', n_jobs=1)
 
 **function:** summary basic information of all columns in a data table based on the provided data schema  
 
@@ -61,6 +61,8 @@ infer_schema.infer_schema(_data=data_2017, fname='properties_2017_sample', outpu
 * **sample_size**: integer or float(<=1.0), default=1.0  
 	- int: number of sample rows to do the summary (useful for large tables)  
 	- float: sample size in percentage  
+* **sample_rows**: integer, default=100  
+        number of rows to get data samples  
 * **feature_colname**: string  
 	- name of the column for feature  
 * **dtype_colname**: string  
