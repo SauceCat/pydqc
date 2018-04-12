@@ -1,4 +1,6 @@
 # pydqc
+[![PyPI version](https://badge.fury.io/py/pydqc.svg)](https://badge.fury.io/py/pydqc)
+
 Python automatic data quality check toolkit. Aims to relieve the pain of writing tedious codes for general data understanding by:    
 - Automatically generate data summary report, which contains useful statistical information for each column in a data table. (useful for general data understanding)
 - Automatically summarize the statistical difference between two data tables. (useful for comparing training set with test set, comparing the same data table from two different snapshot dates, etc.)  
@@ -45,7 +47,7 @@ For an input data table (pandas dataframe):
   - example output for infer_schema: [raw schema](https://github.com/SauceCat/pydqc/blob/master/test/output/data_schema_properties_2016.xlsx), [modified schema](https://github.com/SauceCat/pydqc/blob/master/test/output/data_schema_properties_2016_mdf.xlsx)
   
 ### Step 2 (option 1): data summary  
-- **function: pydqc.data_summary.data_summary(table_schema, table, fname, sample_size=1.0, output_root='', n_jobs=1)**   
+- **function: pydqc.data_summary.data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, output_root='', n_jobs=1)**   
   Summary basic statistical information for each column based on the provided data type.  
     - **'key' and 'str'**: sample value, rate of nan values, number of unique values, top 10 value count.  
     **example output:**  
