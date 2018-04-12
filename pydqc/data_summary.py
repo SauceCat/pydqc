@@ -439,12 +439,17 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
     # create a new workbook to store everything
     wb = openpyxl.Workbook()
 
+    # list of results
+    all_results = []
+
     # key features
     key_features = check_features['key']
     if len(key_features) > 0:
         # get the check result
         _n_jobs = np.min([n_jobs, len(key_features)])
         key_results = Parallel(n_jobs=_n_jobs)(delayed(_check_string)(col, table[[col]]) for col in key_features)
+        all_results += key_results
+
         ws = wb.create_sheet(title=u'key')
         # write the final result to work sheet
         _insert_string_results(key_results, ws, 25)
@@ -456,6 +461,8 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
         _n_jobs = np.min([n_jobs, len(numeric_features)])
         numeric_results = Parallel(n_jobs=_n_jobs)(
             delayed(_check_numeric)(col, table[[col]], img_dir) for col in numeric_features)
+        all_results += numeric_results
+
         ws = wb.create_sheet(title=u'numeric')
         # write the final result to work sheet
         _insert_numeric_results(numeric_results, ws, 35, img_dir)
@@ -465,6 +472,8 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
     if len(string_features) > 0:
         _n_jobs = np.min([n_jobs, len(string_features)])
         string_results = Parallel(n_jobs=_n_jobs)(delayed(_check_string)(col, table[[col]]) for col in string_features)
+        all_results += string_results
+
         ws = wb.create_sheet(title=u'string')
         # write the final result to work sheet
         _insert_string_results(string_results, ws, 25)
@@ -478,7 +487,8 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
             table['%s_numeric' %(col)] = (pd.to_datetime(snapshot_date_now) - pd.to_datetime(table[col], errors='coerce')).astype('timedelta64[M]', errors='ignore')
         _n_jobs = np.min([n_jobs, len(date_features)])
         date_results = Parallel(n_jobs=_n_jobs)(
-            delayed(_check_date)('%s_numeric' %(col), table[['%s_numeric' %(col), col]], img_dir) for col in date_features)
+            delayed(_check_date)('%s_numeric' % col, table[['%s_numeric' % col, col]], img_dir) for col in date_features)
+        all_results += date_results
 
         ws = wb.create_sheet(title=u'date')
         # write the final result to work sheet
@@ -486,27 +496,55 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
 
     # write schema
     ws = wb['Sheet']
-    ws.title = 'schema'
+    ws.title = 'summary'
     out_schema = table_schema[['column', 'type']]
     out_schema['check'] = 'Ok'
 
     # output error features
     error_indices = []
     if len(exclude_features) > 0:
-        out_schema['check'] = out_schema['column'].apply(lambda x : 'exclude' if x in exclude_features else 'Ok')
+        out_schema['check'] = out_schema.apply(lambda x : 'exclude' if x['column'] in exclude_features else x['check'], axis=1)
         error_indices += list(out_schema[out_schema['column'].isin(exclude_features)].index.values)
 
-    _ = _insert_df(out_schema, ws, header=True)
+    # tidy up the output
+    error_msg_dict = {}
+    correct_info = []
+    for result in all_results:
+        if 'error_msg' in result.keys():
+            error_msg_dict[result['column']] = result['error_msg']
+        else:
+            if type(result['result_df']) == list:
+                result_df = result['result_df'][0]
+            else:
+                result_df = result['result_df']
+            info = pd.Series(result_df['value'].values, index=result_df['feature']).to_dict()
+            correct_info.append(info)
+
+    correct_info_df = pd.DataFrame(correct_info)
+    out_schema = out_schema.merge(correct_info_df, on='column', how='left')
+
+    if len(error_msg_dict) > 0:
+        out_schema['check'] = out_schema.apply(lambda x : error_msg_dict[x['column']] if x['column'] in error_msg_dict.keys() else x['check'], axis=1)
+        error_indices += list(out_schema[out_schema['column'].isin(error_msg_dict.keys())].index.values)
+
+    if 'date_min' in out_schema.columns.values:
+        order_columns = ['column', 'type', 'check', 'sample_value', 'nan_rate', 'num_uni', 'value_min', 'value_mean',
+                         'value_median', 'value_max', 'date_min', 'date_max']
+    else:
+        order_columns = ['column', 'type', 'check', 'sample_value', 'nan_rate', 'num_uni', 'value_min', 'value_mean',
+                         'value_median', 'value_max']
+
+    _ = _insert_df(out_schema[order_columns], ws, header=True)
     if len(error_indices) > 0:
         for idx in error_indices:
             ws['C%d' %(idx+2)].style = 'Bad'
 
     _adjust_ws(ws=ws, row_height=25)
 
-
     # write data samples
     ws = wb.create_sheet(title=u'sample')
-    _ = _insert_df(data_sample, ws, header=True, head_color=False)
+    _ = _insert_df(data_sample, ws, header=True, head_color=True, bold_first_column=False)
+    _adjust_ws(ws=ws, row_height=20)
 
     wb.save(filename=os.path.join(output_root, 'data_summary_%s.xlsx' %(fname)))
 

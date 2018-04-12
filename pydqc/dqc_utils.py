@@ -177,7 +177,7 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
             ws.row_dimensions[i].height = row_height
 
 
-def _insert_df(result_df, ws, header=False, head_color=True, head_style='Accent5'):
+def _insert_df(result_df, ws, header=False, head_color=True, bold_first_column=True, head_style='Accent5'):
     """
     Insert a pandas dataframe into a worksheet
 
@@ -214,7 +214,7 @@ def _insert_df(result_df, ws, header=False, head_color=True, head_style='Accent5
                 head_row = ws.max_row
             else:
                 # bold the first column
-                if cell_idx == 0:
+                if cell_idx == 0 and bold_first_column:
                     cell.font = Font(bold=True)
     return head_row
 
