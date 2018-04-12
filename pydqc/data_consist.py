@@ -16,9 +16,9 @@ from scipy.stats import spearmanr
 import warnings
 warnings.filterwarnings('ignore')
 
-from dqc_utils import _get_scale_draw_values, _draw_texts, _insert_numeric_results
-from data_compare import _compare_key, _check_features, _insert_summary
-from data_summary import _insert_string_results
+from .dqc_utils import _get_scale_draw_values, _draw_texts, _insert_numeric_results
+from .data_compare import _compare_key, _check_features, _insert_summary
+from .data_summary import _insert_string_results
 
 # global color values
 TABLE1_DARK = "#4BACC6"

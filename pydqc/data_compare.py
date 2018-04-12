@@ -17,7 +17,7 @@ sns.set_style('white')
 from matplotlib_venn import venn2
 import datetime
 
-from dqc_utils import (
+from .dqc_utils import (
     _style_range, _get_scale_draw_values, _draw_texts,
     _adjust_ws, _insert_df, _insert_numeric_results
 )

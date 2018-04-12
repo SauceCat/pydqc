@@ -14,7 +14,7 @@ import xlsxwriter
 import warnings
 warnings.filterwarnings('ignore')
 
-from dqc_utils import _adjust_ws
+from .dqc_utils import _adjust_ws
 
 
 def _infer_dtype(sample_data, col, type_threshold):

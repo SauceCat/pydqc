@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 sns.set_style('white')
 
-from dqc_utils import (
+from .dqc_utils import (
     _style_range, _get_scale_draw_values, _draw_texts,
     _adjust_ws, _insert_df, _insert_numeric_results
 )
