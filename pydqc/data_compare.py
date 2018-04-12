@@ -698,7 +698,7 @@ def _insert_summary(wb, schema, corr_results):
     error_rows = summary_df[summary_df['error_flg'] == 1].index.values
 
     _ = _insert_df(summary_df[['column_1', 'column_2', 'type_1', 'type_2',
-                               'include_1', 'include_2', 'corr', 'error']], ws, header=True)
+                               'include_1', 'include_2', 'corr', 'error']], ws, header=True, bold_first_column=False)
 
     for r_idx in error_rows:
         ws['G%d' % (r_idx + 2)].style = 'Bad'
