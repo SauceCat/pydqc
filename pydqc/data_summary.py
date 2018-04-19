@@ -553,7 +553,7 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
         shutil.rmtree(img_dir)
 
 
-def data_summary_notebook(table_schema, table, fname, output_root=''):
+def data_summary_notebook(table_schema, table, original_path, fname, output_root=''):
     """
     Automatically generate ipynb for data summary process
 
@@ -563,6 +563,7 @@ def data_summary_notebook(table_schema, table, fname, output_root=''):
         schema of the table, should contain data types of each column
     table: pandas DataFrame
         the data table
+    original_path: the path to original data.
     fname: string
         the output file name
     output_root: string, default=''
@@ -594,6 +595,8 @@ def data_summary_notebook(table_schema, table, fname, output_root=''):
 
     with open(output_path, "a") as outbook:
         # main
+        # add original path to data for reading table.
+        main_line = main_line.replace('THE_PATH_TO_ORIGINAL_DATA', original_path)
         outbook.write(main_line)
 
         # output exclude features
