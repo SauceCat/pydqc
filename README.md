@@ -131,7 +131,8 @@ For example outputs, please refer to https://github.com/SauceCat/pydqc/tree/mast
 ## Contribution
 If you have other ideas for general automatic data quality check, push requests are always welcome! :raising_hand:
 
+
 ## To-dos
-- [] test with python3
-- [] unit test
-- [] documentation with sphinx
+- [ ] test with python3
+- [ ] unit test
+- [ ] documentation with sphinx
