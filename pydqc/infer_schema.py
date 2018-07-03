@@ -110,8 +110,8 @@ def _cal_column_stat(sample_data, col, col_type):
     # only sample_nan_per and sample_num_uni
     else:
         if len(sample_data) > 0:
-            col_stat['sample_num_uni'] = len(np.unique(sample_data))
-            col_stat['sample_uni_percentage'] = round(len(np.unique(sample_data)) * 1.0 / len(sample_data), 5)
+            col_stat['sample_num_uni'] = pd.Series(sample_data).unique().shape[0]
+            col_stat['sample_uni_percentage'] = round(pd.Series(sample_data).unique().shape[0] * 1.0 / pd.Series(sample_data).shape[0], 5)
         else:
             col_stat['sample_num_uni'] = 0
             col_stat['sample_uni_percentage'] = 0
