@@ -35,18 +35,20 @@ def _infer_dtype(sample_data, col, type_threshold):
 
     # get basic dtype from pandas
     col_dtype = str(pd.Series(sample_data).dtype)
+    print(col, col_dtype)
 
     try:
+
+        if 'datetime' in col_dtype:
+            sample_type = 'date'
         # date or str
-        if (col_dtype == 'object') or (col_dtype == 'bool'):
-            date_sample = pd.to_datetime(sample_data, errors='coerce')
+        elif (col_dtype == 'object') or (col_dtype == 'bool'):
+            date_sample = pd.to_numeric(sample_data, errors='coerce')
             date_nan_per = np.sum(pd.isnull(date_sample)) * 1.0 / len(date_sample)
             if date_nan_per < (1.0 - type_threshold):
                 sample_type = 'date'
             else:
                 sample_type = 'str'
-        elif 'datetime' in col_dtype:
-            sample_type = 'date'
         else:
             sample_type = 'numeric'
     except:
