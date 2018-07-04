@@ -1,7 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='pydqc',
-	packages=['pydqc'],
+	packages=find_packages(exclude=("tests",)),
 	package_data={'pydqc': ['templates/*.txt']},
 	version='0.1.0',
 	description='python automatic data quality check',
@@ -16,6 +16,8 @@ setup(name='pydqc',
 		'xlsxwriter>=1.0.2',
 		'seaborn>=0.8.0',
 		'matplotlib_venn>=0.11.5',
-		'scikit-learn'
+		'scikit-learn',
+        'openpyxl',
+        'Pillow'
     ],
 	zip_safe=False)
