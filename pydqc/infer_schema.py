@@ -35,7 +35,6 @@ def _infer_dtype(sample_data, col, type_threshold):
 
     # get basic dtype from pandas
     col_dtype = str(pd.Series(sample_data).dtype)
-    print(col, col_dtype)
 
     try:
 
