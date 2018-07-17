@@ -10,6 +10,8 @@ from openpyxl.formatting.rule import DataBar, FormatObject, Rule
 import datetime
 from sklearn.externals.joblib import Parallel, delayed
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import seaborn as sns 

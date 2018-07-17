@@ -39,7 +39,8 @@ setup(
                           'matplotlib_venn>=0.11.5',
                           'scikit-learn>=0.19.1',
                           'openpyxl>=2.5.4',
-                          'Pillow>=5.2.0'],
+                          'Pillow>=5.2.0',
+                          'matplotlib>=2.2.2'],
         include_package_data=True,
         package_data={'pydqc': ['templates/*.txt']}
         )
