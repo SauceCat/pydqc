@@ -201,8 +201,9 @@ def infer_schema(data, fname, output_root='', sample_size=1.0, type_threshold=0.
 
     # add include column
     full_infos_df['include'] = 1
-    full_infos_df = full_infos_df[['column', 'type', 'include', 'sample_value', 'sample_num_uni',
-                                   'sample_uni_percentage', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
+    full_infos_df = full_infos_df.reindex(
+        columns=['column', 'type', 'include', 'sample_value', 'sample_num_uni',
+                 'sample_uni_percentage', 'sample_min', 'sample_median', 'sample_max', 'sample_std'])
 
     # if base_schema is provided, we can compare with base schema
     if base_schema is not None:
@@ -216,9 +217,10 @@ def infer_schema(data, fname, output_root='', sample_size=1.0, type_threshold=0.
 
         # reorder the column
         full_infos_df['include'] = base_schema['base_include']
-        full_infos_df = full_infos_df[['column', 'base_column', 'type', 'base_type', 'include', 'sample_value',
-                                       'sample_num_uni', 'sample_uni_percentage', 'sample_min', 'sample_median',
-                                       'sample_max', 'sample_std']]
+        full_infos_df = full_infos_df.reindex(
+            columns=['column', 'base_column', 'type', 'base_type', 'include', 'sample_value',
+                     'sample_num_uni', 'sample_uni_percentage', 'sample_min', 'sample_median',
+                     'sample_max', 'sample_std'])
 
     # add data validation for type column
     val_type = DataValidation(type="list", formula1='"key,numeric,str,date"', allow_blank=False)
