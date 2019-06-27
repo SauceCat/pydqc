@@ -167,13 +167,13 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
 
     if adjust_type == 'str':
         ws.column_dimensions['C'].width = col_widths['B']
-        for i in range(ws.max_row + 1):
+        for i in range(1, ws.max_row + 1):
             try:
                 ws.row_dimensions[i].height = row_heights[i]
             except:
                 ws.row_dimensions[i].height = row_height
     else:
-        for i in range(ws.max_row + 1):
+        for i in range(1, ws.max_row + 1):
             ws.row_dimensions[i].height = row_height
 
 
