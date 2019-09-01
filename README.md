@@ -14,15 +14,10 @@ Python automatic data quality check toolkit. Aims to relieve the pain of writing
 
 
 ## Install pydqc
-  - install [py2nb](https://github.com/sklam/py2nb)
-  - install dependents `pip install -r requirements.txt`
-  - install pydqc
-  
 ```bash
-git clone https://github.com/SauceCat/pydqc.git
-cd pydqc
-python setup.py install
+pip install git+https://github.com/SauceCat/pydqc
 ```
+
 
 ## How does it work?
 <img src="https://github.com/SauceCat/pydqc/blob/master/images/pydqc_process.jpg" width="50%">   
