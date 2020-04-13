@@ -34,7 +34,7 @@ TABLE2_DARK = "#F79646"
 TABLE2_LIGHT = "#FDE9D9"
 
 
-def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
+def distribution_compare_pretty(_df1,_df2,col ,df1_label='table1',df2_label='table2',figsize=None, date_flag=False):
     """
     Draw pretty distribution graph for data compare
 
@@ -46,6 +46,10 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
         slice of table2 containing enough information to check
     col: string
         name of column to check
+    df1_label: string,default='table1'
+        label of one of the dataframes
+    df2_label:string,default='table2'
+        label of one of the dataframe
     figsize: tuple, default=None
         figure size
     date_flag: bool, default=False
@@ -57,6 +61,7 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
     TABLE2_DARK = "#F79646"
 
     df1, df2 = _df1.copy(), _df2.copy()
+    df1_name,df2_name = df1_label,df2_label
 
     if date_flag:
         numeric_col = '%s_numeric' %(col)
@@ -115,17 +120,17 @@ def distribution_compare_pretty(_df1, _df2, col, figsize=None, date_flag=False):
     both_num_uni = np.max([df1[col].dropna().nunique(), df2[col].dropna().nunique()])
     if both_num_uni <= 10:
         df1_temp = pd.DataFrame(df1_sample_dropna_values, columns=['value'])
-        df1_temp['type'] = 'table1'
+        df1_temp['type'] = df1_name
         df2_temp = pd.DataFrame(df2_sample_dropna_values, columns=['value'])
-        df2_temp['type'] = 'table2'
+        df2_temp['type'] = df2_name
         full_temp = pd.concat([df1_temp, df2_temp], axis=0)
         sns.countplot(full_temp['value'], hue=full_temp['type'], palette=sns.color_palette([TABLE1_DARK, TABLE2_DARK]))
         if both_num_uni > 5:
             plt.xticks(rotation=90)
         plt.legend(loc=1)
     else:
-        ax1 = sns.distplot(df1_draw_values, color=TABLE1_DARK, hist=False, label='table1')
-        ax2 = sns.distplot(df2_draw_values, color=TABLE2_DARK, hist=False, label='table2')
+        ax1 = sns.distplot(df1_draw_values, color=TABLE1_DARK, hist=False, label=df1_name)
+        ax2 = sns.distplot(df2_draw_values, color=TABLE2_DARK, hist=False, label=df2_name)
         y_low_1, y_up_1 = ax1.get_ylim()
         y_low_2, y_up_2 = ax2.get_ylim()
         y_low, y_up = np.min([y_low_1, y_low_2]), np.max([y_up_1, y_up_2])
@@ -270,7 +275,7 @@ def _compare_key(key, _df1, _df2, img_dir):
     # draw the venn graph
     dpi = 72
     plt.figure(figsize=(635. / dpi, 635. / (9. / 5.) / dpi), dpi=dpi)
-    venn2([set_df1_key, set_df2_key], set_labels=['table1', 'table2'], set_colors=(TABLE1_DARK, TABLE2_DARK), alpha=0.8)
+    venn2([set_df1_key, set_df2_key], set_labels=[df1_name,df2_name], set_colors=(TABLE1_DARK, TABLE2_DARK), alpha=0.8)
 
     # save the graphs
     # adjust graph name
@@ -393,17 +398,17 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
     both_num_uni = np.max(stat_output['num_uni'])
     if both_num_uni <= 10:
         df1_temp = pd.DataFrame(df1_sample_dropna_values, columns=['value'])
-        df1_temp['type'] = 'table1'
+        df1_temp['type'] = df1_name
         df2_temp = pd.DataFrame(df2_sample_dropna_values, columns=['value'])
-        df2_temp['type'] = 'table2'
+        df2_temp['type'] = df2_name
         full_temp = pd.concat([df1_temp, df2_temp], axis=0)
         sns.countplot(full_temp['value'], hue=full_temp['type'], palette=sns.color_palette([TABLE1_DARK, TABLE2_DARK]))
         if both_num_uni > 5:
             plt.xticks(rotation=90)
         plt.legend(loc=1)
     else:
-        ax1 = sns.distplot(df1_draw_values, color=TABLE1_DARK, hist=False, label='table1')
-        ax2 = sns.distplot(df2_draw_values, color=TABLE2_DARK, hist=False, label='table2')
+        ax1 = sns.distplot(df1_draw_values, color=TABLE1_DARK, hist=False, label=df1_name)
+        ax2 = sns.distplot(df2_draw_values, color=TABLE2_DARK, hist=False, label=df2_name)
         y_low_1, y_up_1 = ax1.get_ylim()
         y_low_2, y_up_2 = ax2.get_ylim()
         y_low, y_up = np.min([y_low_1, y_low_2]), np.max([y_up_1, y_up_2])
