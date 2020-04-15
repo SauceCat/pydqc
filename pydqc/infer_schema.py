@@ -37,16 +37,17 @@ def _infer_dtype(sample_data, col, type_threshold):
     col_dtype = str(pd.Series(sample_data).dtype)
 
     try:
+
+        if 'datetime' in col_dtype:
+            sample_type = 'date'
         # date or str
-        if (col_dtype == 'object') or (col_dtype == 'bool'):
-            date_sample = pd.to_datetime(sample_data, errors='coerce')
+        elif (col_dtype == 'object') or (col_dtype == 'bool'):
+            date_sample = pd.to_numeric(sample_data, errors='coerce')
             date_nan_per = np.sum(pd.isnull(date_sample)) * 1.0 / len(date_sample)
             if date_nan_per < (1.0 - type_threshold):
                 sample_type = 'date'
             else:
                 sample_type = 'str'
-        elif 'datetime' in col_dtype:
-            sample_type = 'date'
         else:
             sample_type = 'numeric'
     except:
@@ -110,11 +111,19 @@ def _cal_column_stat(sample_data, col, col_type):
     # only sample_nan_per and sample_num_uni
     else:
         if len(sample_data) > 0:
-            col_stat['sample_num_uni'] = len(np.unique(sample_data))
-            col_stat['sample_uni_percentage'] = round(len(np.unique(sample_data)) * 1.0 / len(sample_data), 5)
+            col_stat['sample_num_uni'] = pd.Series(sample_data).unique().shape[0]
+            col_stat['sample_uni_percentage'] = round(pd.Series(sample_data).unique().shape[0] * 1.0 / pd.Series(sample_data).shape[0], 5)
+            col_stat['sample_min'] = np.nan
+            col_stat['sample_median'] = np.nan
+            col_stat['sample_max'] = np.nan
+            col_stat['sample_std'] = np.nan
         else:
             col_stat['sample_num_uni'] = 0
             col_stat['sample_uni_percentage'] = 0
+            col_stat['sample_min'] = np.nan
+            col_stat['sample_median'] = np.nan
+            col_stat['sample_max'] = np.nan
+            col_stat['sample_std'] = np.nan
     return col_stat
 
 
@@ -140,6 +149,8 @@ def infer_schema(data, fname, output_root='', sample_size=1.0, type_threshold=0.
     base_schema: pandas DataFrame, default=None
         data schema to base on
     """
+
+    data = data.copy()
 
     # check sample_size
     if sample_size > 1:

@@ -10,6 +10,8 @@ from openpyxl.formatting.rule import DataBar, FormatObject, Rule
 import datetime
 from sklearn.externals.joblib import Parallel, delayed
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import seaborn as sns 
@@ -526,6 +528,11 @@ def data_summary(table_schema, table, fname, sample_size=1.0, sample_rows=100, o
     if len(error_msg_dict) > 0:
         out_schema['check'] = out_schema.apply(lambda x : error_msg_dict[x['column']] if x['column'] in error_msg_dict.keys() else x['check'], axis=1)
         error_indices += list(out_schema[out_schema['column'].isin(error_msg_dict.keys())].index.values)
+
+    # Check for non present columns
+    for c in ['value_min', 'value_mean', 'value_median', 'value_max']:
+        if c not in out_schema.columns:
+            out_schema[c] = np.nan
 
     if 'date_min' in out_schema.columns.values:
         order_columns = ['column', 'type', 'check', 'sample_value', 'nan_rate', 'num_uni', 'value_min', 'value_mean',
