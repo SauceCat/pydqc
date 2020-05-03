@@ -112,23 +112,41 @@ def _draw_texts(text_values, draw_value_4, mark, y_low, y_up, date_flag=False):
 
     color_dark = TABLE1_DARK if mark == 1 else TABLE2_DARK
     color_light = TABLE1_LIGHT if mark == 1 else TABLE2_LIGHT
-    plt.axvline(x=draw_value_4[0], color=color_dark, linestyle='--', linewidth=1)
-    plt.axvline(x=draw_value_4[3], color=color_dark, linestyle='--', linewidth=1)
+    plt.axvline(x=draw_value_4[0], color=color_dark, linestyle="--", linewidth=1)
+    plt.axvline(x=draw_value_4[3], color=color_dark, linestyle="--", linewidth=1)
 
     if date_flag:
-        plt.text(draw_value_4[0], y_low + (y_up - y_low) * 0.1 * mark, 'max:' + str(text_values[1]),
-            ha="center", va="center", bbox=dict(boxstyle="square", facecolor=color_light, edgecolor='none'))
-        plt.text(draw_value_4[3], y_low + (y_up - y_low) * (0.6 + 0.1 * mark), 'min:' + str(text_values[0]),
-            ha="center", va="center", bbox=dict(boxstyle="square", facecolor=color_light, edgecolor='none'))
+        plt.text(
+            draw_value_4[0],
+            y_low + (y_up - y_low) * 0.1 * mark,
+            "max:" + str(text_values[1]),
+            ha="center",
+            va="center",
+            bbox=dict(boxstyle="square", facecolor=color_light, edgecolor="none"),
+        )
+        plt.text(
+            draw_value_4[3],
+            y_low + (y_up - y_low) * (0.6 + 0.1 * mark),
+            "min:" + str(text_values[0]),
+            ha="center",
+            va="center",
+            bbox=dict(boxstyle="square", facecolor=color_light, edgecolor="none"),
+        )
     else:
-        plt.axvline(x=draw_value_4[1], color=color_dark, linestyle='--', linewidth=1)
-        plt.axvline(x=draw_value_4[2], color=color_dark, linestyle='--', linewidth=1)
+        plt.axvline(x=draw_value_4[1], color=color_dark, linestyle="--", linewidth=1)
+        plt.axvline(x=draw_value_4[2], color=color_dark, linestyle="--", linewidth=1)
 
-        indicators = ['min', 'mean', 'median', 'max']
+        indicators = ["min", "mean", "median", "max"]
         for i in range(4):
-            text = '%s:'%(indicators[i]) + str(round(text_values[i], 3))
-            plt.text(draw_value_4[i], y_low + (y_up - y_low) * (0.2 * i + 0.1 * mark), text,
-                ha="center", va="center", bbox=dict(boxstyle="square", facecolor=color_light, edgecolor='none'))
+            text = "%s:" % (indicators[i]) + str(round(text_values[i], 3))
+            plt.text(
+                draw_value_4[i],
+                y_low + (y_up - y_low) * (0.2 * i + 0.1 * mark),
+                text,
+                ha="center",
+                va="center",
+                bbox=dict(boxstyle="square", facecolor=color_light, edgecolor="none"),
+            )
 
 
 def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
@@ -149,7 +167,7 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
         col_name = xlsxwriter.utility.xl_col_to_name(i)
         col_widths[col_name] = 0
         for cell in col:
-            cell.alignment = Alignment(horizontal='left', wrap_text=True)
+            cell.alignment = Alignment(horizontal="left", wrap_text=True)
             if cell:
                 try:
                     cell_length = len(str(cell.value))
@@ -163,10 +181,12 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
 
     for i, col in enumerate(range(ws.max_column)):
         col_name = xlsxwriter.utility.xl_col_to_name(i)
-        ws.column_dimensions[col_name].width = np.min([np.max([15, col_widths[col_name]]), 80])
+        ws.column_dimensions[col_name].width = np.min(
+            [np.max([15, col_widths[col_name]]), 80]
+        )
 
-    if adjust_type == 'str':
-        ws.column_dimensions['C'].width = col_widths['B']
+    if adjust_type == "str":
+        ws.column_dimensions["C"].width = col_widths["B"]
         for i in range(ws.max_row + 1):
             try:
                 ws.row_dimensions[i].height = row_heights[i]
@@ -177,7 +197,14 @@ def _adjust_ws(ws, row_height, row_heights=None, adjust_type=None):
             ws.row_dimensions[i].height = row_height
 
 
-def _insert_df(result_df, ws, header=False, head_color=True, bold_first_column=True, head_style='Accent5'):
+def _insert_df(
+    result_df,
+    ws,
+    header=False,
+    head_color=True,
+    bold_first_column=True,
+    head_style="Accent5",
+):
     """
     Insert a pandas dataframe into a worksheet
 
@@ -202,9 +229,11 @@ def _insert_df(result_df, ws, header=False, head_color=True, bold_first_column=T
     max_col = result_df.shape[1]
     for r_idx, r in enumerate(dataframe_to_rows(result_df, index=False, header=header)):
         ws.append(r)
-        for cell_idx, cell in enumerate(ws.iter_cols(max_col=max_col, min_row=ws.max_row, max_row=ws.max_row)):
+        for cell_idx, cell in enumerate(
+            ws.iter_cols(max_col=max_col, min_row=ws.max_row, max_row=ws.max_row)
+        ):
             cell = cell[0]
-            cell.font = Font(name='Calibri', size=11)
+            cell.font = Font(name="Calibri", size=11)
 
             # apply cell style on header
             # get the header row index
@@ -242,40 +271,46 @@ def _insert_numeric_results(numeric_results, ws, row_height, img_dir, date_flag=
 
     # loop and output the results
     for result in numeric_results:
-        column = result['column']
-        if 'result_df' not in result.keys():
-            ws.append([column, result['error_msg']])
-            for col in ['A', 'B']:
-                ws['%s%d' %(col, ws.max_row)].style = 'Bad'
-            ws.append([''])
+        column = result["column"]
+        if "result_df" not in result.keys():
+            ws.append([column, result["error_msg"]])
+            for col in ["A", "B"]:
+                ws["%s%d" % (col, ws.max_row)].style = "Bad"
+            ws.append([""])
             continue
 
-        result_df = result['result_df']
-        result_df = result_df[['feature', 'value', 'graph']]
+        result_df = result["result_df"]
+        result_df = result_df[["feature", "value", "graph"]]
         head_row = _insert_df(result_df, ws)
 
         # merge cells for the graph
-        ws.merge_cells('C%d:C%d' %(head_row+1, head_row+result_df.shape[0]-1))
-        _style_range(ws, 'A%d:C%d'%(head_row, head_row+result_df.shape[0]-1), border=border)
-        ws['C%d' %(head_row+1)].border = Border(top=None, left=None, right=thin, bottom=thin)
+        ws.merge_cells("C%d:C%d" % (head_row + 1, head_row + result_df.shape[0] - 1))
+        _style_range(
+            ws, "A%d:C%d" % (head_row, head_row + result_df.shape[0] - 1), border=border
+        )
+        ws["C%d" % (head_row + 1)].border = Border(
+            top=None, left=None, right=thin, bottom=thin
+        )
 
         # add gap
-        ws.append([''])
+        ws.append([""])
 
         # insert graph
         try:
             if date_flag:
-                graph_name = '%s_numeric' %(column)
+                graph_name = "%s_numeric" % (column)
             else:
                 graph_name = column
 
-            if '/' in graph_name:
-                graph_name = graph_name.replace('/', '')
+            if "/" in graph_name:
+                graph_name = graph_name.replace("/", "")
 
-            img = openpyxl.drawing.image.Image(os.path.join(img_dir, '%s.png' %(graph_name)))
-            ws.add_image(img, 'C%d' %(head_row+1))
+            img = openpyxl.drawing.image.Image(
+                os.path.join(img_dir, "%s.png" % (graph_name))
+            )
+            ws.add_image(img, "C%d" % (head_row + 1))
         except:
             continue
     # adjust worksheet
     _adjust_ws(ws=ws, row_height=row_height)
-    ws.column_dimensions['C'].width = 90
+    ws.column_dimensions["C"].width = 90
