@@ -616,3 +616,8 @@ def data_consist_notebook(
     os.system(
         "python -m py2nb %s %s" % (output_path, output_path.replace(".py", ".ipynb"))
     )
+    main_line.close()
+    key_line.close()
+    str_line.close()
+    numeric_line.close()
+    date_line.close()
