@@ -929,3 +929,8 @@ def data_compare_notebook(table1, table2, schema1, schema2, fname, output_root='
         outbook.close()
 
     os.system("python -m py2nb %s %s" %(output_path, output_path.replace('.py', '.ipynb')))
+    main_line.close() 
+    key_line.close()
+    str_line.close()
+    numeric_line.close()
+    date_line.close()
