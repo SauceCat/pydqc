@@ -755,7 +755,7 @@ def data_summary_notebook(table_schema, table, fname, output_root=""):
         outbook.close()
 
     os.system(
-        "python -m py2nb %s %s" % (output_path, output_path.replace(".py", ".ipynb"))
+        "py2nb %s %s" % (output_path, output_path.replace(".py", ".ipynb"))
     )
     main_line.close()
     key_line.close()
