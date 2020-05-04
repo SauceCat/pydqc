@@ -295,7 +295,7 @@ def _simple_stats(col, _df1, _df2, stat_type):
     return output
 
 
-def _compare_key(key, _df1, _df2, img_dir):
+def _compare_key(key, _df1, _df2, img_dir, _df1_label="table1", _df2_label="table2"):
     """
     Compare two key type values
 
@@ -308,6 +308,10 @@ def _compare_key(key, _df1, _df2, img_dir):
     _df2: pandas DataFrame
         slice of table2 containing enough information to check
     img_dir: root directory for the generated images
+    _df1_label: string,default='table1'
+        label of one of the dataframes
+    _df2_label:string,default='table2'
+        label of one of the dataframe
 
     Returns
     -------
@@ -316,6 +320,8 @@ def _compare_key(key, _df1, _df2, img_dir):
 
     df1 = _df1.copy()
     df2 = _df2.copy()
+
+    df1_name, df2_name = df1_label, df2_label
 
     # get basic stats information
     stat_output = _simple_stats(key, df1, df2, "key")
@@ -392,7 +398,9 @@ def _compare_key(key, _df1, _df2, img_dir):
     }
 
 
-def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
+def _compare_numeric(
+    col, _df1, _df2, img_dir, _df1_label="table1", _df2_label="table2", date_flag=False
+):
     """
     Compare two numeric type values
 
@@ -405,6 +413,10 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
     _df2: pandas DataFrame
         slice of table2 containing enough information to check
     img_dir: root directory for the generated images
+    _df1_label: string,default='table1'
+        label of one of the dataframes
+    _df2_label:string,default='table2'
+        label of one of the dataframe
     date_flag: boolean
         Whether the column is date type
 
@@ -416,6 +428,8 @@ def _compare_numeric(col, _df1, _df2, img_dir, date_flag=False):
     # sampling
     df1_sample = _df1.copy()
     df2_sample = _df2.copy()
+
+    df1_name, df2_name = _df1_label, _df2_label
 
     stat_output = _simple_stats(col, df1_sample, df2_sample, "numeric")
 
