@@ -201,8 +201,10 @@ def infer_schema(data, fname, output_root='', sample_size=1.0, type_threshold=0.
 
     # add include column
     full_infos_df['include'] = 1
-    full_infos_df = full_infos_df[['column', 'type', 'include', 'sample_value', 'sample_num_uni',
-                                   'sample_uni_percentage', 'sample_min', 'sample_median', 'sample_max', 'sample_std']]
+    pickups = ['column', 'type', 'include', 'sample_value', 'sample_num_uni', 'sample_uni_percentage']
+    if 'numeric' in data_types.values():
+        pickups += ['sample_min', 'sample_median', 'sample_max', 'sample_std']
+    full_infos_df = full_infos_df[pickups]
 
     # if base_schema is provided, we can compare with base schema
     if base_schema is not None:
