@@ -110,6 +110,8 @@ def _cal_column_stat(sample_data, col, col_type):
     # only sample_nan_per and sample_num_uni
     else:
         if len(sample_data) > 0:
+            # converting to string to avoid mixed type errors
+            sample_data = sample_data.astype(str)
             col_stat['sample_num_uni'] = len(np.unique(sample_data))
             col_stat['sample_uni_percentage'] = round(len(np.unique(sample_data)) * 1.0 / len(sample_data), 5)
         else:
