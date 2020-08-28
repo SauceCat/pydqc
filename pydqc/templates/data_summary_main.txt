@@ -1,4 +1,3 @@
-
 """
 ## import useful packages
 
@@ -24,7 +23,7 @@ from pydqc.data_summary import distribution_summary_pretty
 """
 
 # the data table (pandas DataFrame)
-table =
+table = pd.read_csv("../THE_PATH_TO_ORIGINAL_DATA")
 print("table size: " + str(table.shape))
 
 # global values
