@@ -4,7 +4,7 @@ import os
 import shutil
 
 import openpyxl
-from sklearn.externals.joblib import Parallel, delayed
+from joblib import Parallel, delayed
 
 import matplotlib.pyplot as plt
 import seaborn as sns 
