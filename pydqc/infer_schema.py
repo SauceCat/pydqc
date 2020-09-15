@@ -8,7 +8,7 @@ from openpyxl.styles import Font, PatternFill
 from openpyxl.formatting.rule import FormulaRule
 from openpyxl.worksheet.datavalidation import DataValidation
 
-from sklearn.externals.joblib import Parallel, delayed
+from joblib import Parallel, delayed
 import xlsxwriter
 
 import warnings

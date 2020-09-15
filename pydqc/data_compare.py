@@ -7,7 +7,7 @@ import openpyxl
 from openpyxl.styles import Border, Side
 from openpyxl.formatting.rule import DataBar, FormatObject, Rule
 
-from sklearn.externals.joblib import Parallel, delayed
+from joblib import Parallel, delayed
 from scipy.stats import spearmanr
 
 import matplotlib.pyplot as plt
